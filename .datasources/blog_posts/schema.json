@@ -1,0 +1,139 @@
+
+{
+  "name": "blog_posts",
+  "title": "博客文章",
+  "schemas": [
+    {
+      "name": "title",
+      "title": "标题",
+      "type": "String"
+    },
+    {
+      "name": "content",
+      "title": "内容",
+      "type": "Markdown"
+    },
+    {
+      "name": "author",
+      "title": "作者",
+      "type": "Object",
+      "items": {
+        "type": "Object",
+        "format": {
+          "name": {
+            "type": "String",
+            "title": "作者姓名"
+          },
+          "avatar": {
+            "type": "Image",
+            "title": "作者头像"
+          },
+          "bio": {
+            "type": "String",
+            "title": "作者简介"
+          }
+        }
+      }
+    },
+    {
+      "name": "createdAt",
+      "title": "创建时间",
+      "type": "Date",
+      "format": "date"
+    },
+    {
+      "name": "updatedAt",
+      "title": "更新时间",
+      "type": "Date",
+      "format": "date"
+    },
+    {
+      "name": "publishedAt",
+      "title": "发布时间",
+      "type": "Date",
+      "format": "date"
+    },
+    {
+      "name": "readTime",
+      "title": "阅读时间",
+      "type": "String"
+    },
+    {
+      "name": "likes",
+      "title": "点赞数",
+      "type": "Number"
+    },
+    {
+      "name": "tags",
+      "title": "标签",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    },
+    {
+      "name": "category",
+      "title": "分类",
+      "type": "String"
+    },
+    {
+      "name": "status",
+      "title": "发布状态",
+      "type": "String"
+    },
+    {
+      "name": "isPublished",
+      "title": "是否发布",
+      "type": "Boolean"
+    },
+    {
+      "name": "isDraft",
+      "title": "是否为草稿",
+      "type": "Boolean"
+    },
+    {
+      "name": "isFavorite",
+      "title": "收藏状态",
+      "type": "Boolean"
+    },
+    {
+      "name": "favoriteCount",
+      "极title": "收藏数",
+      "type": "Number"
+    },
+    {
+      "name": "viewCount",
+      "title": "阅读数",
+      "type": "Number"
+    },
+    {
+      "name": "slug",
+      "title": "URL别名",
+      "type": "String"
+    },
+    {
+      "name": "coverImage",
+      "title": "封面图片",
+      "type": "Image"
+    },
+    {
+      "name": "excerpt",
+      "title": "文章摘要",
+      "type": "String"
+    },
+    {
+      "name": "metaDescription",
+      "title": "SEO描述",
+      "type": "String"
+    },
+    {
+      "name": "metaKeywords",
+      "title": "SEO关键词",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    }
+  ]
+}
+  

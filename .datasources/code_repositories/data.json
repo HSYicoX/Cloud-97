@@ -1,0 +1,234 @@
+
+[
+  {
+    "_id": "repo_001",
+    "name": "haokir-blog",
+    "description": "Personal blog platform built with React and Markdown",
+    "stars": 128,
+    "forks": 42,
+    "lastUpdated": "2 hours ago",
+    "license": "MIT",
+    "language": "JavaScript",
+    "isFavorite": false,
+    "fileTree": [
+      {
+        "name": "src",
+        "type": "folder",
+        "children": [
+          {
+            "name": "components",
+            "type": "folder",
+            "children": [
+              {
+                "name": "Header.jsx",
+                "type": "file",
+                "size": "2.1 KB"
+              },
+              {
+                "name": "Footer.jsx",
+                "type": "file",
+                "size": "1.8 KB"
+              }
+            ]
+          },
+          {
+            "name": "pages",
+            "type": "folder",
+            "children": []
+          },
+          {
+            "name": "App.jsx",
+            "type": "file",
+            "size": "3.2 KB"
+          }
+        ]
+      },
+      {
+        "name": "public",
+        "type": "folder",
+        "children": [
+          {
+            "name": "index.html",
+            "type": "file",
+            "size": "1.5 KB"
+          },
+          {
+            "name": "favicon.ico",
+            "type": "file",
+            "size": "4.2 KB"
+          }
+        ]
+      },
+      {
+        "name": "README.md",
+        "type": "file",
+        "size": "4.7 KB"
+      },
+      {
+        "name": "package.json",
+        "type": "file",
+        "size": "1.2 KB"
+      },
+      {
+        "name": ".gitignore",
+        "type": "file",
+        "size": "0.3 KB"
+      }
+    ],
+    "commitHistory": [
+      {
+        "message": "Add Markdown editor component",
+        "author": "haokir",
+        "hash": "a1b2c3d4",
+        "date": "2 hours ago",
+        "filesChanged": 3
+      },
+      {
+        "message": "Update repository file structure",
+        "author": "haokir",
+        "hash": "e5f6g7h8",
+        "date": "5 hours ago",
+        "filesChanged": 5
+      },
+      {
+        "message": "Fix responsive design issues",
+        "author": "haokir",
+        "hash": "i9j0k1l2",
+        "date": "1 day ago",
+        "filesChanged": 2
+      }
+    ],
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "repo_002",
+    "name": "react-ui-kit",
+    "description": "A collection of reusable React UI components",
+    "stars": 89,
+    "forks": 23,
+    "lastUpdated": "1 day ago",
+    "license": "Apache-2.0",
+    "language": "TypeScript",
+    "isFavorite": false,
+    "fileTree": [
+      {
+        "name": "src",
+        "type": "folder",
+        "children": [
+          {
+            "name": "components",
+            "type": "folder",
+            "children": [
+              {
+                "name": "Button",
+                "type": "folder",
+                "children": [
+                  {
+                    "name": "index.tsx",
+                    "type": "file",
+                    "size": "3.5 KB"
+                  },
+                  {
+                    "name": "styles.css",
+                    "type": "file",
+                    "size": "1.2 KB"
+                  }
+                ]
+              },
+              {
+                "name": "Input",
+                "type": "folder",
+                "children": [
+                  {
+                    "name": "index.tsx",
+                    "type": "file",
+                    "size": "4.1 KB"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "commitHistory": [
+      {
+        "message": "Add Button component variants",
+        "author": "haokir",
+        "hash": "m3n4o5p6",
+        "date": "1 day ago",
+        "filesChanged": 2
+      },
+      {
+        "message": "Initial project setup",
+        "author": "haokir",
+        "hash": "q7r8s9t0",
+        "date": "3 days ago",
+        "filesChanged": 5
+      }
+    ],
+    "createdAt": 1736784000000,
+    "updatedAt": 1736784000000
+  },
+  {
+    "_id": "repo_003",
+    "name": "nodejs-api-server",
+    "description": "RESTful API server built with Node.js and Express",
+    "stars": 156,
+    "forks": 67,
+    "lastUpdated": "3 days ago",
+    "license": "MIT",
+    "language": "JavaScript",
+    "isFavorite": false,
+    "fileTree": [
+      {
+        "name": "src",
+        "type": "folder",
+        "children": [
+          {
+            "name": "controllers",
+            "type": "folder",
+            "children": [
+              {
+                "name": "userController.js",
+                "type": "file",
+                "size": "5.2 KB"
+              }
+            ]
+          },
+          {
+            "name": "routes",
+            "type": "folder",
+            "children": [
+              {
+                "name": "userRoutes.js",
+                "type": "file",
+                "size": "3.8 KB"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "commitHistory": [
+      {
+        "message": "Add user authentication middleware",
+        "author": "haokir",
+        "hash": "u1v2w3x4",
+        "date": "3 days ago",
+        "filesChanged": 4
+      },
+      {
+        "message": "Implement JWT token validation",
+        "author": "haokir",
+        "hash": "y5z6a7b8",
+        "date": "5 days ago",
+        "filesChanged": 3
+      }
+    ],
+    "createdAt": 1736601600000,
+    "updatedAt": 1736601600000
+  }
+]
+  

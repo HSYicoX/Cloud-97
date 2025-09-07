@@ -1,0 +1,104 @@
+
+{
+  "name": "code_repositories",
+  "title": "代码仓库",
+  "schemas": [
+    {
+      "name": "name",
+      "title": "仓库名称",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "title": "仓库描述",
+      "type": "String"
+    },
+    {
+      "name": "stars",
+      "title": "星标数",
+      "type": "Number"
+    },
+    {
+      "name": "forks",
+      "title": "分支数",
+      "type": "Number"
+    },
+    {
+      "name": "lastUpdated",
+      "title": "最后更新时间",
+      "type": "String"
+    },
+    {
+      "name": "license",
+      "title": "许可证",
+      "type": "String"
+    },
+    {
+      "name": "language",
+      "title": "主要语言",
+      "type": "String"
+    },
+    {
+      "name": "isFavorite",
+      "title": "收藏状态",
+      "type": "Boolean"
+    },
+    {
+      "name": "fileTree",
+      "title": "文件树结构",
+      "type": "Array",
+      "items": {
+        "type": "Object",
+        "format": {
+          "name": {
+            "type": "String",
+            "title": "文件/文件夹名称"
+          },
+          "type": {
+            "type": "String",
+            "title": "类型"
+          },
+          "size": {
+            "type": "String",
+            "title": "文件大小"
+          },
+          "children": {
+            "type": "Array",
+            "title": "子文件/文件夹"
+          }
+        }
+      }
+    },
+    {
+      "name": "commitHistory",
+      "title": "提交历史",
+      "type": "Array",
+      "items": {
+        "type": "Object",
+        "format": {
+          "message": {
+            "type": "String",
+            "title": "提交信息"
+          },
+          "author": {
+            "type": "String",
+            "title": "提交者"
+          },
+          "hash": {
+            "type": "String",
+            "title": "提交哈希"
+          },
+          "date": {
+            "type": "String",
+            "title": "提交时间"
+          },
+          "filesChanged": {
+            "type": "Number",
+            "title": "变更文件数"
+          }
+        }
+      }
+    }
+  ]
+}
+  

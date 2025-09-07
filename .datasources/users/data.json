@@ -1,0 +1,53 @@
+
+[
+  {
+    "_id": "user_001",
+    "username": "Haokir",
+    "email": "haokir@example.com",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    "bio": "前端开发工程师 | React爱好者 | 技术博客作者",
+    "location": "上海",
+    "website": "https://haokir.dev",
+    "totalViews": 3427,
+    "totalLikes": 116,
+    "totalPosts": 12,
+    "totalFollowers": 284,
+    "blogCount": 12,
+    "repositoryCount": 8,
+    "favoriteCount": 23,
+    "monthlyStats": [
+      {
+        "month": "1月",
+        "views": 1245,
+        "likes": 42
+      },
+      {
+        "month": "2月",
+        "views": 892,
+        "likes": 31
+      },
+      {
+        "month": "3月",
+        "views": 567,
+        "likes": 18
+      },
+      {
+        "month": "4月",
+        "views": 723,
+        "likes": 25
+      }
+    ],
+    "notificationSettings": {
+      "commentNotifications": true,
+      "followerNotifications": true,
+      "marketingEmails": false
+    },
+    "privacySettings": {
+      "publicProfile": true,
+      "showEmail": true
+    },
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

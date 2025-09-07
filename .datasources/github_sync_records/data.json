@@ -1,0 +1,75 @@
+
+[
+  {
+    "_id": "sync_001",
+    "status": "success",
+    "message": "同步完成，更新了3个仓库",
+    "timestamp": 1736870400000,
+    "repositoriesUpdated": 3,
+    "repositoryIds": ["repo_001", "repo_002", "repo_003"],
+    "syncType": "manual",
+    "duration": 3000,
+    "userId": "user_001",
+    "githubUsername": "haokir",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "sync_002",
+    "status": "success",
+    "message": "同步完成，更新了5个仓库",
+    "timestamp": 1736784000000,
+    "repositoriesUpdated": 5,
+    "repositoryIds": ["repo_001", "repo_002", "repo_003", "repo_004", "repo_005"],
+    "syncType": "manual",
+    "duration": 2500,
+    "userId": "user_001",
+    "githubUsername": "haokir",
+    "createdAt": 1736784000000,
+    "updatedAt": 1736784000000
+  },
+  {
+    "_id": "sync_003",
+    "status": "error",
+    "message": "同步失败：GitHub API限制",
+    "timestamp": 1736697600000,
+    "repositoriesUpdated": 0,
+    "repositoryIds": [],
+    "syncType": "manual",
+    "errorDetails": "API rate limit exceeded. Please wait before making more requests.",
+    "duration": 1000,
+    "userId": "user_001",
+    "githubUsername": "haokir",
+    "createdAt": 1736697600000,
+    "updatedAt": 1736697600000
+  },
+  {
+    "_id": "sync_004",
+    "status": "success",
+    "message": "自动同步完成，更新了2个仓库",
+    "timestamp": 1736611200000,
+    "repositoriesUpdated": 2,
+    "repositoryIds": ["repo_001", "repo_002"],
+    "syncType": "auto",
+    "duration": 1800,
+    "userId": "user_001",
+    "githubUsername": "haokir",
+    "createdAt": 1736611200000,
+    "updatedAt": 1736611200000
+  },
+  {
+    "_id": "sync_005",
+    "status": "success",
+    "message": "同步完成，更新了4个仓库",
+    "timestamp": 1736524800000,
+    "repositoriesUpdated": 4,
+    "repositoryIds": ["repo_001", "repo_002", "repo_003", "repo_004"],
+    "syncType": "manual",
+    "duration": 3200,
+    "userId": "user_001",
+    "githubUsername": "haokir",
+    "createdAt": 1736524800000,
+    "updatedAt": 1736524800000
+  }
+]
+  

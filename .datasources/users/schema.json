@@ -1,0 +1,129 @@
+
+{
+  "name": "users",
+  "title": "用户信息",
+  "schemas": [
+    {
+      "name": "username",
+      "title": "用户名",
+      "type": "String"
+    },
+    {
+      "name": "email",
+      "title": "邮箱",
+      "type": "Email"
+    },
+    {
+      "name": "avatar",
+      "title": "头像",
+      "type": "Image"
+    },
+    {
+      "name": "bio",
+      "title": "个人简介",
+      "type": "MultiLineString"
+    },
+    {
+      "name": "location",
+      "title": "位置",
+      "type": "String"
+    },
+    {
+      "name": "website",
+      "title": "网站",
+      "type": "Url"
+    },
+    {
+      "name": "totalViews",
+      "title": "总阅读量",
+      "type": "Number"
+    },
+    {
+      "name": "totalLikes",
+      "title": "总点赞数",
+      "type": "Number"
+    },
+    {
+      "name": "totalPosts",
+      "title": "文章总数",
+      "type": "Number"
+    },
+    {
+      "name": "totalFollowers",
+      "title": "粉丝数量",
+      "type": "Number"
+    },
+    {
+      "name": "blogCount",
+      "title": "博客数量",
+      "type": "Number"
+    },
+    {
+      "name": "repositoryCount",
+      "title": "仓库数量",
+      "type": "Number"
+    },
+    {
+      "name": "favoriteCount",
+      "title": "收藏数量",
+      "type": "Number"
+    },
+    {
+      "name": "monthlyStats",
+      "title": "月度统计数据",
+      "type": "Array",
+      "items": {
+        "type": "Object",
+        "format": {
+          "month": {
+            "type": "String",
+            "title": "月份"
+          },
+          "views": {
+            "type": "Number",
+            "title": "阅读量"
+          },
+          "likes": {
+            "type": "Number",
+            "title": "点赞数"
+          }
+        }
+      }
+    },
+    {
+      "name": "notificationSettings",
+      "title": "通知设置",
+      "type": "Object",
+      "format": {
+        "commentNotifications": {
+          "type": "Boolean",
+          "title": "文章评论通知"
+        },
+        "followerNotifications": {
+          "type": "Boolean",
+          "title": "新粉丝通知"
+        },
+        "marketingEmails": {
+          "type": "Boolean",
+          "title": "营销邮件"
+        }
+      }
+    },
+    {
+      "name": "privacySettings",
+      "title": "隐私设置",
+      "type": "Object",
+      "format": {
+        "publicProfile": {
+          "type": "Boolean",
+          "title": "公开个人资料"
+        },
+        "showEmail": {
+          "type": "Boolean",
+          "title": "显示邮箱地址"
+        }
+      }
+    }
+  ]
+}
+  

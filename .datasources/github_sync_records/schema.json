@@ -1,0 +1,62 @@
+
+{
+  "name": "github_sync_records",
+  "title": "GitHub同步记录",
+  "schemas": [
+    {
+      "name": "status",
+      "title": "同步状态",
+      "type": "String"
+    },
+    {
+      "name": "message",
+      "title": "同步消息",
+      "type": "String"
+    },
+    {
+      "name": "timestamp",
+      "title": "同步时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "repositoriesUpdated",
+      "title": "更新仓库数量",
+      "type": "Number"
+    },
+    {
+      "name": "repositoryIds",
+      "title": "仓库ID列表",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    },
+    {
+      "name": "syncType",
+      "title": "同步类型",
+      "type": "String"
+    },
+    {
+      "name": "errorDetails",
+      "title": "错误详情",
+      "type": "String"
+    },
+    {
+      "name": "duration",
+      "title": "同步耗时",
+      "type": "Number"
+    },
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "githubUsername",
+      "title": "GitHub用户名",
+      "type": "String"
+    }
+  ]
+}
+  
