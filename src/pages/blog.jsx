@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 // @ts-ignore;
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, useToast, Badge } from '@/components/ui';
 // @ts-ignore;
-import { Heart, MessageSquare, Eye, Calendar, Clock, Search, Filter, ArrowUpDown, BookOpen, TrendingUp, Star } from 'lucide-react';
+import { Heart, MessageSquare, Eye, Calendar, Clock, Search, Filter, ArrowUpDown, BookOpen, TrendingUp, Star, X, Tag, Hash } from 'lucide-react';
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
@@ -31,10 +31,13 @@ export default function BlogListPage(props) {
   const [loadingMessage, setLoadingMessage] = useState('正在加载博客...');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTags, setSelectedTags] = useState([]);
   const [sortBy, setSortBy] = useState('newest');
   const [categories, setCategories] = useState([]);
+  const [allTags, setAllTags] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showTagFilter, setShowTagFilter] = useState(false);
 
   // 加载博客列表
   const loadBlogs = async (pageNum = 1, append = false) => {
@@ -75,9 +78,22 @@ export default function BlogListPage(props) {
         setFilteredBlogs(result.records);
         setHasMore(result.records.length === 12);
 
-        // 提取分类
+        // 提取分类和标签
         const uniqueCategories = [...new Set(result.records.map(blog => blog.category).filter(Boolean))];
         setCategories(uniqueCategories);
+
+        // 提取所有标签
+        const allTags = result.records.reduce((acc, blog) => {
+          if (blog.tags && Array.isArray(blog.tags)) {
+            blog.tags.forEach(tag => {
+              if (!acc.includes(tag)) {
+                acc.push(tag);
+              }
+            });
+          }
+          return acc;
+        }, []);
+        setAllTags(allTags);
         setLoadingStatus('success');
         setLoadingMessage('博客加载完成');
       } else {
@@ -110,6 +126,11 @@ export default function BlogListPage(props) {
     // 分类过滤
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(blog => blog.category === selectedCategory);
+    }
+
+    // 标签过滤
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(blog => blog.tags && blog.tags.some(tag => selectedTags.includes(tag)));
     }
 
     // 排序
@@ -145,6 +166,16 @@ export default function BlogListPage(props) {
     setSelectedCategory(value);
   };
 
+  // 处理标签选择
+  const handleTagToggle = tag => {
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
+
+  // 清除所有标签
+  const handleClearTags = () => {
+    setSelectedTags([]);
+  };
+
   // 处理排序
   const handleSortChange = value => {
     setSortBy(value);
@@ -175,7 +206,7 @@ export default function BlogListPage(props) {
   // 过滤和排序
   useEffect(() => {
     filterBlogs();
-  }, [searchQuery, selectedCategory, sortBy, blogs]);
+  }, [searchQuery, selectedCategory, selectedTags, sortBy, blogs]);
   if (isLoading && blogs.length === 0) {
     return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <LoadingSpinner size="xl" text={loadingMessage} />
@@ -203,7 +234,7 @@ export default function BlogListPage(props) {
           {/* 搜索和过滤区域 */}
           <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 mb-8">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                 {/* 搜索框 */}
                 <div className="md:col-span-2">
                   <div className="relative">
@@ -221,7 +252,9 @@ export default function BlogListPage(props) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">所有分类</SelectItem>
-                      {categories.map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}
+                      {categories.map(category => <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -243,6 +276,49 @@ export default function BlogListPage(props) {
                   </Select>
                 </div>
               </div>
+
+              {/* 标签筛选区域 */}
+              <div className="border-t border-slate-700/50 pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <Tag className="h-4 w-4 mr-2 text-slate-400" />
+                    <span className="text-sm font-medium text-slate-300">标签筛选</span>
+                  </div>
+                  {selectedTags.length > 0 && <RippleEffect>
+                      <Button variant="ghost" size="sm" onClick={handleClearTags} className="text-slate-400 hover:text-slate-300 text-xs">
+                        <X className="h-3 w-3 mr-1" />
+                        清除
+                      </Button>
+                    </RippleEffect>}
+                </div>
+
+                {/* 标签列表 */}
+                <div className="flex flex-wrap gap-2">
+                  {allTags.slice(0, showTagFilter ? allTags.length : 8).map(tag => <RippleEffect key={tag}>
+                      <Badge variant={selectedTags.includes(tag) ? "default" : "outline"} className={`cursor-pointer transition-all hover-lift click-scale ${selectedTags.includes(tag) ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50'}`} onClick={() => handleTagToggle(tag)}>
+                        <Hash className="h-3 w-3 mr-1" />
+                        {tag}
+                      </Badge>
+                    </RippleEffect>)}
+                  
+                  {allTags.length > 8 && <RippleEffect>
+                      <Badge variant="outline" className="cursor-pointer bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50" onClick={() => setShowTagFilter(!showTagFilter)}>
+                        {showTagFilter ? '收起' : `查看更多 (${allTags.length - 8})`}
+                      </Badge>
+                    </RippleEffect>}
+                </div>
+
+                {/* 已选标签提示 */}
+                {selectedTags.length > 0 && <div className="mt-3">
+                    <span className="text-sm text-slate-400 mr-2">已选标签:</span>
+                    {selectedTags.map(tag => <Badge key={tag} variant="default" className="bg-blue-500/20 text-blue-300 mr-2 mb-2 inline-flex items-center">
+                        {tag}
+                        <button onClick={() => handleTagToggle(tag)} className="ml-1 hover:text-blue-200">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>)}
+                  </div>}
+              </div>
             </CardContent>
           </Card>
 
@@ -256,6 +332,12 @@ export default function BlogListPage(props) {
               <div className="flex items-center justify-between mb-6">
                 <p className="text-slate-400">
                   共找到 <span className="text-white font-semibold">{filteredBlogs.length}</span> 篇文章
+                  {selectedCategory !== 'all' && <span className="ml-2">
+                      (分类: <span className="text-blue-300">{selectedCategory}</span>)
+                    </span>}
+                  {selectedTags.length > 0 && <span className="ml-2">
+                      (标签: <span className="text-blue-300">{selectedTags.join(', ')}</span>)
+                    </span>}
                 </p>
                 <div className="flex items-center space-x-4 text-sm text-slate-400">
                   <span className="flex items-center">
