@@ -5,3 +5,8 @@ export * from './Button.jsx';
 export * from './Card.jsx';
 export * from './Input.jsx';
 export * from './Textarea.jsx';
+export * from './Navigation.jsx';
+export * from './FileTree.jsx';
+export * from './SyncHistory.jsx';
+export * from './RepositoryHeader.jsx';
+export * from './CodeViewer.jsx';
