@@ -28,6 +28,10 @@
             "type": "Image",
             "title": "作者头像"
           },
+          "avatarUrl": {
+            "type": "String",
+            "title": "作者头像URL"
+          },
           "bio": {
             "type": "String",
             "title": "作者简介"
@@ -38,20 +42,20 @@
     {
       "name": "createdAt",
       "title": "创建时间",
-      "type": "Date",
-      "format": "date"
+      "type": "DateTime",
+      "format": "timestamp-ms"
     },
     {
       "name": "updatedAt",
       "title": "更新时间",
-      "type": "Date",
-      "format": "date"
+      "type": "DateTime",
+      "format": "timestamp-ms"
     },
     {
       "name": "publishedAt",
       "title": "发布时间",
-      "type": "Date",
-      "format": "date"
+      "type": "DateTime",
+      "format": "timestamp-ms"
     },
     {
       "name": "readTime",
@@ -97,8 +101,8 @@
       "type": "Boolean"
     },
     {
-      "name": "favoriteCount",
-      "极title": "收藏数",
+      "极name": "favoriteCount",
+      "title": "收藏数",
       "type": "Number"
     },
     {

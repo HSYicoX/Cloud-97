@@ -353,6 +353,7 @@ export default function MarkdownEditor(props) {
           });
         }
       } catch (error) {
+        console.error('封面图片上传失败:', error);
         toast({
           title: '上传失败',
           description: error.message || '封面图片上传失败',
@@ -399,10 +400,9 @@ export default function MarkdownEditor(props) {
         isPublished: false,
         isDraft: true,
         coverImage: uploadedCoverImageUrl,
-        // 使用上传后的图片URL
         author: {
           name: currentUser?.name || '匿名用户',
-          avatar: currentUser?.avatarUrl || ''
+          avatarUrl: currentUser?.avatarUrl || ''
         },
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime()
@@ -499,10 +499,9 @@ export default function MarkdownEditor(props) {
         isPublished: true,
         isDraft: false,
         coverImage: uploadedCoverImageUrl,
-        // 使用上传后的图片URL
         author: {
           name: currentUser?.name || '匿名用户',
-          avatar: currentUser?.avatarUrl || ''
+          avatarUrl: currentUser?.avatarUrl || ''
         },
         publishedAt: new Date().getTime(),
         updatedAt: new Date().getTime()
