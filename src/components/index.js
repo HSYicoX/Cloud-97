@@ -16,3 +16,4 @@ export * from './InputFeedback.jsx';
 export * from './LoadingSpinner.jsx';
 export * from './SubmitButton.jsx';
 export * from './FormStatus.jsx';
+export * from './BlogCard.jsx';

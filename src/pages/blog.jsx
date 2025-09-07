@@ -1,484 +1,294 @@
 // @ts-ignore;
 import React, { useState, useEffect } from 'react';
 // @ts-ignore;
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea, Avatar, AvatarFallback, AvatarImage, useToast } from '@/components/ui';
+import { Card, CardContent, CardHeader, CardTitle, Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, useToast, Badge } from '@/components/ui';
 // @ts-ignore;
-import { Heart, MessageSquare, Share, Bookmark, Clock, User, Calendar, ArrowLeft, Copy, ThumbsUp } from 'lucide-react';
+import { Heart, MessageSquare, Eye, Calendar, Clock, Search, Filter, ArrowUpDown, BookOpen, TrendingUp, Star } from 'lucide-react';
 
-export default function BlogDetailPage(props) {
+// @ts-ignore;
+import { Navigation } from '@/components/Navigation';
+// @ts-ignore;
+import { MouseEffects } from '@/components/MouseEffects';
+// @ts-ignore;
+import { RippleEffect } from '@/components/RippleEffect';
+// @ts-ignore;
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+// @ts-ignore;
+import { FormStatus } from '@/components/FormStatus';
+// @ts-ignore;
+import { BlogCard } from '@/components/BlogCard';
+export default function BlogListPage(props) {
   const {
     $w
   } = props;
   const {
     toast
   } = useToast();
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
+  const [blogs, setBlogs] = useState([]);
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [favoriteCount, setFavoriteCount] = useState(0);
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [blog, setBlog] = useState(null);
-  const [relatedArticles, setRelatedArticles] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState('loading');
+  const [loadingMessage, setLoadingMessage] = useState('正在加载博客...');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
+  const [categories, setCategories] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  // 从URL参数获取博客ID
-  const blogId = $w.page.dataset.params?.id || '1';
-
-  // 模拟评论数据
-  const mockComments = [{
-    id: 1,
-    user: {
-      name: '前端开发者',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a极1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    },
-    content: '非常详细的解析，对理解React 18很有帮助！',
-    createdAt: '2小时前',
-    likes: 5
-  }, {
-    id: 2,
-    user: {
-      name: 'React爱好者',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    },
-    content: '并发渲染的概念解释得很清楚，期待在实际项目中使用。',
-    createdAt: '5小时前',
-    likes: 3
-  }];
-
-  // 加载博客数据
-  useEffect(() => {
-    loadBlogData();
-  }, [blogId]);
-  const loadBlogData = async () => {
+  // 加载博客列表
+  const loadBlogs = async (pageNum = 1, append = false) => {
     try {
       setIsLoading(true);
-
-      // 获取当前博客文章
-      const blogResult = await $w.cloud.callDataSource({
-        dataSourceName: 'blog_posts',
-        methodName: 'wedaGetItemV2',
-        params: {
-          filter: {
-            where: {
-              $and: [{
-                _id: {
-                  $eq: blogId
-                }
-              }]
-            }
-          },
-          select: {
-            $master: true
-          }
-        }
-      });
-      if (blogResult) {
-        setBlog(blogResult);
-        setIsFavorite(blogResult.isFavorite || false);
-        setFavoriteCount(blogResult.favoriteCount || 0);
-      }
-
-      // 获取相关文章
-      const relatedResult = await $w.cloud.callDataSource({
+      setLoadingStatus('loading');
+      setLoadingMessage('正在加载博客文章...');
+      const result = await $w.cloud.callDataSource({
         dataSourceName: 'blog_posts',
         methodName: 'wedaGetRecordsV2',
         params: {
           filter: {
             where: {
               $and: [{
-                _id: {
-                  $neq: blogId
+                isPublished: {
+                  $eq: true
                 }
-              }, {
-                category: blogResult?.category ? {
-                  $eq: blogResult.category
-                } : {}
               }]
             }
           },
           select: {
             $master: true
           },
-          pageSize: 3,
-          pageNumber: 1,
           orderBy: [{
             createdAt: 'desc'
-          }]
+          }],
+          pageSize: 12,
+          pageNumber: pageNum,
+          getCount: true
         }
       });
-      if (relatedResult?.records) {
-        setRelatedArticles(relatedResult.records.slice(0, 3));
-      }
+      if (result && result.records) {
+        if (append) {
+          setBlogs(prev => [...prev, ...result.records]);
+        } else {
+          setBlogs(result.records);
+        }
+        setFilteredBlogs(result.records);
+        setHasMore(result.records.length === 12);
 
-      // 加载评论
-      setComments(mockComments);
+        // 提取分类
+        const uniqueCategories = [...new Set(result.records.map(blog => blog.category).filter(Boolean))];
+        setCategories(uniqueCategories);
+        setLoadingStatus('success');
+        setLoadingMessage('博客加载完成');
+      } else {
+        setLoadingStatus('error');
+        setLoadingMessage('没有找到博客文章');
+      }
     } catch (error) {
-      console.error('加载博客数据失败:', error);
+      console.error('加载博客失败:', error);
+      setLoadingStatus('error');
+      setLoadingMessage('加载失败，请刷新重试');
       toast({
         title: '加载失败',
-        description: '无法加载博客内容，请稍后重试',
+        description: '无法加载博客列表',
         variant: 'destructive'
       });
-
-      // 加载失败时使用默认数据
-      setBlog({
-        _id: blogId,
-        title: 'React 18新特性深度解析',
-        content: `# React 18新特性深度解析\n\n文章加载中...`,
-        author: {
-          name: 'Haokir',
-          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
-          bio: '前端开发工程师，React爱好者'
-        },
-        createdAt: '2024-01-15',
-        readTime: '8 min read',
-        likes: 42,
-        tags: ['React', '前端开发', 'JavaScript'],
-        category: '前端开发',
-        isFavorite: false,
-        favoriteCount: 42
-      });
-      setRelatedArticles([{
-        _id: '2',
-        title: 'TypeScript高级类型技巧',
-        excerpt: '掌握TypeScript的条件类型、映射类型和模板字面量类型',
-        readTime: '12 min read',
-        date: '2024-01-10'
-      }, {
-        _id: '3',
-        title: '现代CSS布局实战',
-        excerpt: '使用Grid和Flexbox构建响应式布局的最佳实践',
-        readTime: '6 min read',
-        date: '2024-01-05'
-      }, {
-        _id: '4',
-        title: 'Vue 3组合式API深入解析',
-        excerpt: '深入学习Vue 3的组合式API和响应式系统',
-        readTime: '10 min read',
-        date: '2024-01-02'
-      }]);
     } finally {
       setIsLoading(false);
     }
   };
-  const handleCommentSubmit = async e => {
-    e.preventDefault();
-    if (!newComment.trim()) {
-      toast({
-        title: '错误',
-        description: '请输入评论内容',
-        variant: 'destructive'
-      });
-      return;
-    }
-    setIsSubmittingComment(true);
-    try {
-      const comment = {
-        id: Date.now(),
-        user: {
-          name: '当前用户',
-          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face'
-        },
-        content: newComment,
-        createdAt: '刚刚',
-        likes: 0
-      };
-      setComments(prev => [comment, ...prev]);
-      setNewComment('');
-      toast({
-        title: '成功',
-        description: '评论已发布'
-      });
-    } catch (error) {
-      toast({
-        title: '发布失败',
-        description: '评论发布失败，请稍后重试',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsSubmittingComment(false);
-    }
-  };
-  const handleFavorite = async () => {
-    try {
-      if (!blog) return;
-      const newFavoriteState = !isFavorite;
-      const newFavoriteCount = newFavoriteState ? favoriteCount + 1 : favoriteCount - 1;
 
-      // 立即更新UI
-      setIsFavorite(newFavoriteState);
-      setFavoriteCount(newFavoriteCount);
+  // 过滤和搜索博客
+  const filterBlogs = () => {
+    let filtered = blogs;
 
-      // 更新数据库
-      await $w.cloud.callDataSource({
-        dataSourceName: 'blog_posts',
-        methodName: 'wedaUpdateV2',
-        params: {
-          data: {
-            isFavorite: newFavoriteState,
-            favoriteCount: newFavoriteCount
-          },
-          filter: {
-            where: {
-              $and: [{
-                _id: {
-                  $eq: blogId
-                }
-              }]
-            }
-          }
-        }
-      });
-      toast({
-        title: newFavoriteState ? '已收藏' : '已取消收藏',
-        description: newFavoriteState ? '文章已添加到收藏' : '文章已从收藏中移除'
-      });
-    } catch (error) {
-      console.error('更新收藏状态失败:', error);
-      // 回滚UI状态
-      setIsFavorite(!newFavoriteState);
-      setFavoriteCount(favoriteCount);
-      toast({
-        title: '操作失败',
-        description: '收藏状态更新失败，请稍后重试',
-        variant: 'destructive'
-      });
+    // 搜索过滤
+    if (searchQuery) {
+      filtered = filtered.filter(blog => blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || blog.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) || blog.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) || blog.category?.toLowerCase().includes(searchQuery.toLowerCase()));
     }
-  };
-  const copyCode = code => {
-    navigator.clipboard.writeText(code);
-    toast({
-      title: '已复制',
-      description: '代码已复制到剪贴板'
-    });
-  };
-  const shareArticle = platform => {
-    const url = window.location.href;
-    let shareUrl = '';
-    switch (platform) {
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(blog?.title || '')}&url=${encodeURIComponent(url)}`;
+
+    // 分类过滤
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(blog => blog.category === selectedCategory);
+    }
+
+    // 排序
+    switch (sortBy) {
+      case 'newest':
+        filtered = [...filtered].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+      case 'oldest':
+        filtered = [...filtered].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         break;
-      case 'linkedin':
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+      case 'mostViews':
+        filtered = [...filtered].sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+        break;
+      case 'mostLikes':
+        filtered = [...filtered].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        break;
+      case 'mostFavorites':
+        filtered = [...filtered].sort((a, b) => (b.favoriteCount || 0) - (a.favoriteCount || 0));
         break;
       default:
-        return;
+        break;
     }
-    window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    setFilteredBlogs(filtered);
   };
-  const renderMarkdown = text => {
-    if (!text) return '';
-    return text.replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mb-6 text-white">$1</h1>').replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mb-4 mt-8 text-white">$1</h2>').replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold mb-3 mt-6 text-white">$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>').replace(/\*(.*?)\*/g, '<em class="italic">$1</em>').replace(/`(.*?)`/g, '<code class="bg-slate-700 px-2 py-1 rounded text-sm font-mono">$1</code>').replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg max-w-full h-auto my-6" />').replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline">$1</a>').replace(/^- (.*$)/gim, '<li class="ml-6 mb-2">$1</li>').replace(/\n/g, '<br/>');
+
+  // 处理搜索
+  const handleSearch = e => {
+    setSearchQuery(e.target.value);
   };
-  const renderCodeBlocks = html => {
-    const codeBlockRegex = /<pre>(.*?)<\/pre>/gs;
-    return html.replace(codeBlockRegex, (match, code) => {
-      const language = code.includes('import') ? 'javascript' : 'bash';
-      return `<div class="relative group">
-        <pre class="bg-slate-800 p-4 rounded-lg overflow-x-auto text-sm font-mono text-slate-200">${code}</pre>
-        <button onclick="this.parentElement.querySelector('pre').textContent && copyCode(this.parentElement.querySelector('pre').textContent)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-700 hover:bg-slate-600 p-2 rounded">
-          <Copy className="h-4 w-4" />
-        </button>
-      </div>`;
-    });
+
+  // 处理分类选择
+  const handleCategoryChange = value => {
+    setSelectedCategory(value);
   };
-  const handleNavigateToRelated = articleId => {
+
+  // 处理排序
+  const handleSortChange = value => {
+    setSortBy(value);
+  };
+
+  // 加载更多
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadBlogs(nextPage, true);
+  };
+
+  // 跳转到文章详情
+  const handleNavigateToBlog = blogId => {
     $w.utils.navigateTo({
-      pageId: 'blog',
+      pageId: 'blog-detail',
       params: {
-        id: articleId
+        id: blogId
       }
     });
   };
-  if (isLoading) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>;
-  }
-  if (!blog) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">文章未找到</h2>
-          <Button onClick={() => $w.utils.navigateBack()}>
-            返回首页
-          </Button>
-        </div>
-      </div>;
-  }
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* Header */}
-      <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" className="text-slate-300 hover:text-white" onClick={() => $w.utils.navigateBack()}>
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              返回
-            </Button>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className={`${isFavorite ? 'text-red-400 hover:text-red-300' : 'text-slate-300 hover:text-white'} transition-all duration-200 hover:scale-110`} onClick={handleFavorite}>
-                <Heart className={`h-4 w-4 mr-1 ${isFavorite ? 'fill-current' : ''}`} />
-                {favoriteCount}
-              </Button>
-              <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white">
-                <Bookmark className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
-        {/* Article Header */}
-        <article className="mb-12">
+  // 初始化加载
+  useEffect(() => {
+    loadBlogs();
+  }, []);
+
+  // 过滤和排序
+  useEffect(() => {
+    filterBlogs();
+  }, [searchQuery, selectedCategory, sortBy, blogs]);
+  if (isLoading && blogs.length === 0) {
+    return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
+        <LoadingSpinner size="xl" text={loadingMessage} />
+      </div>;
+  }
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+      {/* 鼠标特效 */}
+      <MouseEffects />
+      
+      {/* Navigation */}
+      <Navigation $w={$w} currentPage="blog" />
+      
+      <div className="container mx-auto px-4 py-8 pt-20">
+        <div className="max-w-6xl mx-auto">
+          {/* 页面标题 */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-500/10 backdrop-blur-sm border border-blue-500/30 rounded-full mb-6">
-              <div className="w-2 h-2 bg-blue-极400 rounded-full animate-pulse mr-2"></div>
-              <span className="text-blue-300 text-sm">{blog.category}</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
-              {blog.title}
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-4">
+              技术博客
             </h1>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-slate-400 mb-6">
-              <div className="flex items-center">
-                <User className="h-4 w-4 mr-2" />
-                {blog.author?.name}
-              </div>
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
-                {blog.createdAt}
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                {blog.readTime}
-              </div>
-              <div className="flex items-center">
-                <Heart className={`h-4 w-4 mr-1 ${isFavorite ? 'fill-current text-red-400' : 'text-slate-400'}`} />
-                {favoriteCount}
-              </div>
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {blog.tags?.map(tag => <span key={tag} className="px-3 py-1 bg-slate-800/50 text-slate-300 rounded-full text-sm">
-                  #{tag}
-                </span>)}
-            </div>
+            <p className="text-slate-400 text-lg">
+              分享前端开发、React、TypeScript等技术文章
+            </p>
           </div>
 
-          {/* Author Info */}
+          {/* 搜索和过滤区域 */}
           <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 mb-8">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <Avatar className="h-12 w-12 mr-4">
-                  <AvatarImage src={blog.author?.avatar} alt={blog.author?.name} />
-                  <AvatarFallback>{blog.author?.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* 搜索框 */}
+                <div className="md:col-span-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                    <Input placeholder="搜索文章标题、标签或分类..." value={searchQuery} onChange={handleSearch} className="pl-10 bg-slate-700/50 border-slate-600 text-white" />
+                  </div>
+                </div>
+
+                {/* 分类筛选 */}
                 <div>
-                  <h3 className="font-semibold text-white">{blog.author?.name}</h3>
-                  <p className="text-slate-400 text-sm">{blog.author?.bio}</p>
+                  <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                    <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="所有分类" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">所有分类</SelectItem>
+                      {categories.map(category => <SelectItem key={category} value={category}>{category}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* 排序 */}
+                <div>
+                  <Select value={sortBy} onValueChange={handleSortChange}>
+                    <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                      <ArrowUpDown className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="排序方式" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="newest">最新发布</SelectItem>
+                      <SelectItem value="oldest">最早发布</SelectItem>
+                      <SelectItem value="mostViews">最多阅读</SelectItem>
+                      <SelectItem value="mostLikes">最多点赞</SelectItem>
+                      <SelectItem value="mostFavorites">最多收藏</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Article Content */}
-          <div className="prose prose-invert prose-slate max-w-none">
-            <div dangerouslySetInnerHTML={{
-            __html: renderCodeBlocks(renderMarkdown(blog.content))
-          }} />
-          </div>
-        </article>
+          {/* 博客列表 */}
+          {loadingStatus === 'error' ? <FormStatus status="error" message={loadingMessage} /> : filteredBlogs.length === 0 ? <div className="text-center py-16">
+              <BookOpen className="h-16 w-16 text-slate-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-slate-300 mb-2">没有找到文章</h3>
+              <p className="text-slate-400">尝试调整搜索条件或分类筛选</p>
+            </div> : <>
+              {/* 博客统计 */}
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-slate-400">
+                  共找到 <span className="text-white font-semibold">{filteredBlogs.length}</span> 篇文章
+                </p>
+                <div className="flex items-center space-x-4 text-sm text-slate-400">
+                  <span className="flex items-center">
+                    <Eye className="h-4 w-4 mr-1" />
+                    {filteredBlogs.reduce((sum, blog) => sum + (blog.viewCount || 0), 0)} 阅读
+                  </span>
+                  <span className="flex items-center">
+                    <Heart className="h-4 w-4 mr-1" />
+                    {filteredBlogs.reduce((sum, blog) => sum + (blog.likes || 0), 0)} 点赞
+                  </span>
+                  <span className="flex items-center">
+                    <Star className="h-4 w-4 mr-1" />
+                    {filteredBlogs.reduce((sum, blog) => sum + (blog.favoriteCount || 0), 0)} 收藏
+                  </span>
+                </div>
+              </div>
 
-        {/* Share Buttons */}
-        <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg">分享文章</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => shareArticle('twitter')}>
-                Twitter
-              </Button>
-              <Button variant="outline" className="border-slate-600 text极-slate-300 hover:bg-slate-700" onClick={() => shareArticle('facebook')}>
-                Facebook
-              </Button>
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => shareArticle('linkedin')}>
-                LinkedIn
-              </Button>
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => navigator.clipboard.writeText(window.location.href)}>
-                复制链接
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              {/* 博客网格 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {filteredBlogs.map(blog => <BlogCard key={blog._id} blog={blog} onNavigate={() => handleNavigateToBlog(blog._id)} />)}
+              </div>
 
-        {/* Comments Section */}
-        <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center">
-              <MessageSquare className="h-5 w-5 mr-2" />
-              评论 ({comments.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Comment Form */}
-            <form onSubmit={handleCommentSubmit} className="mb-6">
-              <Textarea placeholder="写下你的评论..." value={newComment} onChange={e => setNewComment(e.target.value)} className="bg-slate-700/50 border-slate-600 text-white mb-4" rows={4} disabled={isSubmittingComment} />
-              <Button type="submit" className="bg-blue-500 hover:bg-blue-600" disabled={isSubmittingComment} isLoading={isSubmittingComment}>
-                发布评论
-              </Button>
-            </form>
-
-            {/* Comments List */}
-            <div className="space-y-6">
-              {comments.map(comment => <div key={comment.id} className="p-4 bg-slate-700/30 rounded-lg">
-                  <div className="flex items-start mb-3">
-                    <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={comment.user.avatar} alt={comment.user.name} />
-                      <AvatarFallback>{comment.user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-white">{comment.user.name}</h4>
-                      <p className="text-slate-400 text-sm">{comment.createdAt}</p>
-                    </div>
-                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                      <ThumbsUp className="h-4 w-4 mr-1" />
-                      {comment.likes}
+              {/* 加载更多 */}
+              {hasMore && <div className="text-center">
+                  <RippleEffect>
+                    <Button onClick={loadMore} disabled={isLoading} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
+                      {isLoading ? <LoadingSpinner size="sm" className="mr-2" /> : <TrendingUp className="h-4 w-4 mr-2" />}
+                      加载更多
                     </Button>
-                  </div>
-                  <p className="text-slate-200">{comment.content}</p>
-                </div>)}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Related Articles */}
-        <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-lg">相关文章</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {relatedArticles.map(article => <Card key={article._id} className="bg-slate-700/30 border-slate-600 hover:border-blue-500/30 transition-all duration-300 cursor-pointer" onClick={() => handleNavigateToRelated(article._id)}>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-white mb-2 line-clamp-2">{article.title}</h3>
-                    <p className="text-slate-400 text-sm mb-3 line-clamp-2">{article.excerpt}</p>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>{article.date}</span>
-                      <span>{article.readTime}</span>
-                    </div>
-                  </CardContent>
-                </Card>)}
-            </div>
-          </CardContent>
-        </Card>
+                  </RippleEffect>
+                </div>}
+            </>}
+        </div>
       </div>
     </div>;
 }
