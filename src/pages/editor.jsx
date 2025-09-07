@@ -7,6 +7,8 @@ import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, 
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
+// @ts-ignore;
+import { MouseEffects } from '@/components/MouseEffects';
 export default function MarkdownEditor(props) {
   const {
     $w
@@ -32,16 +34,17 @@ export default function MarkdownEditor(props) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [existingCategories, setExistingCategories] = useState(['前端开发', 'TypeScript', 'CSS', 'JavaScript', 'React', 'Vue', 'Node.js']);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // 从URL参数获取文章ID，判断是编辑还是新建
   const postId = $w.page.dataset.params?.id;
   const isNewPost = $w.page.dataset.params?.new === 'true';
-
-  // 加载文章数据（如果是编辑模式）
   useEffect(() => {
+    setIsLoaded(true);
     if (postId && !isNewPost) {
       loadPostData();
     }
+    return () => setIsLoaded(false);
   }, [postId, isNewPost]);
   const loadPostData = async () => {
     try {
@@ -294,7 +297,7 @@ export default function MarkdownEditor(props) {
         isPublished: true,
         author: {
           name: currentUser?.name || 'Haokir',
-          avatar: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
+          avatar: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h极150&fit=crop&crop=face',
           bio: currentUser?.bio || '前端开发工程师 | React爱好者'
         },
         readTime: `${Math.ceil(content.length / 500)} min read`,
@@ -363,15 +366,18 @@ export default function MarkdownEditor(props) {
     // 简单的Markdown解析
     return text.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mb-4">$1</h1>').replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mb-3 mt-6">$1</h2>').replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold mb-2 mt-4">$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>').replace(/\*(.*?)\*/g, '<em class="italic">$1</em>').replace(/`(.*?)`/g, '<code class="bg-slate-700 px-1 py-0.5 rounded text-sm">$1</code>').replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg max-w-full h-auto my-4" />').replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline">$1</a>').replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>').replace(/\n/g, '<br/>');
   };
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4 relative">
+      {/* 鼠标特效 */}
+      <MouseEffects />
+      
       {/* Navigation */}
       <Navigation $w={$w} currentPage="editor" />
       
       <div className="container mx-auto max-w-7xl pt-16">
         {/* Header */}
-        <div className="bg-slate-800/40 backdrop-blur-md rounded-xl p-6 mb-6 border border-slate-700/50">
+        <div className="bg-slate-800/40 backdrop-blur-md rounded-xl p-6 mb-6 border border-slate-700/50 glass-dark animate-fade-in">
           <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" className="text-slate-300 hover:text-white" onClick={handleNavigateBack}>
+            <Button variant="ghost" className="text-slate-300 hover:text-white hover-lift" onClick={handleNavigateBack}>
               <ArrowLeft className="h-5 w-5 mr-2" />
               返回
             </Button>
@@ -381,13 +387,13 @@ export default function MarkdownEditor(props) {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Input placeholder="输入文章标题..." value={title} onChange={e => setTitle(e.target.value)} className="bg-slate-700/50 border-slate-600 text-white text-xl font-bold flex-1" />
+            <Input placeholder="输入文章标题..." value={title} onChange={e => setTitle(e.target.value)} className="bg-slate-700/50 border-slate-600 text-white text-xl font-bold flex-1 focus-ring" />
             <div className="flex gap-2">
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={copyToClipboard} disabled={isLoading}>
+              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={copyToClipboard} disabled={isLoading}>
                 <Copy className="h-4 w-4 mr-2" />
                 复制
               </Button>
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={downloadMarkdown} disabled={isLoading}>
+              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={downloadMarkdown} disabled={isLoading}>
                 <Download className="h-4 w-4 mr-2" />
                 下载
               </Button>
@@ -398,7 +404,9 @@ export default function MarkdownEditor(props) {
         {/* Meta Information */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Tags Input */}
-          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
+          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark animate-fade-in" style={{
+          animationDelay: '0.1s'
+        }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center">
                 <Tag className="h-4 w-4 mr-2" />
@@ -407,9 +415,9 @@ export default function MarkdownEditor(props) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Input placeholder="输入标签并按回车添加 (最多5个)" value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyPress={handleTagInput} className="bg-slate-700/50 border-slate-600 text-white" disabled={tags.length >= 5} />
+                <Input placeholder="输入标签并按回车添加 (最多5个)" value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyPress={handleTagInput} className="bg-slate-700/50 border-slate-600 text-white focus-ring" disabled={tags.length >= 5} />
                 {tags.length > 0 && <div className="flex flex-wrap gap-2">
-                    {tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                    {tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30 hover-lift">
                         {tag}
                         <button onClick={() => removeTag(tag)} className="ml-1 hover:text-blue-100">
                           <X className="h-3 w-3" />
@@ -421,7 +429,9 @@ export default function MarkdownEditor(props) {
           </Card>
 
           {/* Category Select */}
-          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
+          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark animate-fade-in" style={{
+          animationDelay: '0.2s'
+        }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center">
                 <BookOpen className="h-4 w-4 mr-2" />
@@ -430,7 +440,7 @@ export default function MarkdownEditor(props) {
             </CardHeader>
             <CardContent>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white">
+                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus-ring">
                   <SelectValue placeholder="选择文章分类" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
@@ -443,7 +453,9 @@ export default function MarkdownEditor(props) {
           </Card>
 
           {/* Status Toggle */}
-          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
+          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark animate-fade-in" style={{
+          animationDelay: '0.3s'
+        }}>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center">
                 <Send className="h-4 w-4 mr-2" />
@@ -463,64 +475,66 @@ export default function MarkdownEditor(props) {
 
         {/* Editor and Preview */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50">
-            <TabsTrigger value="edit" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">
+          <TabsList className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 glass-dark">
+            <TabsTrigger value="edit" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift">
               <Edit className="h-4 w-4 mr-2" />
               编辑
             </TabsTrigger>
-            <TabsTrigger value="preview" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">
+            <TabsTrigger value="preview" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift">
               <Eye className="h-4 w-4 mr-2" />
               预览
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="edit" className="mt-0">
-            <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
+          <TabsContent value="edit" className="mt-0 animate-fade-in">
+            <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark">
               <CardContent className="p-0">
                 {/* Toolbar */}
                 <div className="flex flex-wrap gap-2 p-4 border-b border-slate-700/50">
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('**', '**', '粗体文字')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('**', '**', '粗体文字')} disabled={isLoading}>
                     <Bold className="h-4 w-4 mr-2" />
                     粗体
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('*', '*', '斜体文字')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('*', '*', '斜体文字')} disabled={isLoading}>
                     <Italic className="h-4 w-4 mr-2" />
                     斜体
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('`', '`', '代码')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('`', '`', '代码')} disabled={isLoading}>
                     <Code className="h-4 w-4 mr-2" />
                     代码
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('[', '](url)', '链接文字')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('[', '](url)', '链接文字')} disabled={isLoading}>
                     <Link className="h-4 w-4 mr-2" />
                     链接
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
                     <Image className="h-4 w-4 mr-2" />
                     图片
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('```\n', '\n```', '代码块')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('```\n', '\n```', '代码块')} disabled={isLoading}>
                     <Code className="h-4 w-4 mr-2" />
                     代码块
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('> ', '', '引用文字')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('> ', '', '引用文字')} disabled={isLoading}>
                     <Quote className="h-4 w-4 mr-2" />
                     引用
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => insertText('- ', '', '列表项')} disabled={isLoading}>
+                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('- ', '', '列表项')} disabled={isLoading}>
                     <List className="h-4 w-4 mr-2" />
                     列表
                   </Button>
                 </div>
 
                 {/* Editor */}
-                <Textarea id="markdown-editor" value={content} onChange={e => setContent(e.target.value)} className="w-full h-96 bg-slate-800 border-0 text-white resize-none focus:ring-0 p-4 font-mono text-sm" placeholder="开始编写你的博客内容..." />
+                <Textarea id="markdown-editor" value={content} onChange={e => setContent(e.target.value)} className="w-full h-96 bg-slate-800 border-0 text-white resize-none focus:ring-0 p-4 font-mono text-sm focus-ring" placeholder="开始编写你的博客内容..." />
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="preview" className="mt-0">
-            <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50">
+          <TabsContent value="preview" className="mt-0 animate-fade-in" style={{
+          animationDelay: '0.1s'
+        }}>
+            <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark">
               <CardContent className="p-6">
                 <div className="prose prose-invert prose-slate max-w-none">
                   <div dangerouslySetInnerHTML={{
@@ -533,15 +547,17 @@ export default function MarkdownEditor(props) {
         </Tabs>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 justify-end">
-          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 px-8" onClick={handleNavigateBack}>
+        <div className="flex gap-4 justify-end animate-fade-in" style={{
+        animationDelay: '0.2s'
+      }}>
+          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 px-8 hover-lift" onClick={handleNavigateBack}>
             取消
           </Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 px-8" onClick={saveDraft} disabled={isSaving || isPublishing} isLoading={isSaving}>
+          <Button className="bg-blue-500 hover:bg-blue-600 px-8 hover-lift" onClick={saveDraft} disabled={isSaving || isPublishing} isLoading={isSaving}>
             <Save className="h-4 w-4 mr-2" />
             保存草稿
           </Button>
-          <Button className="bg-green-500 hover:bg-green-600 px-8" onClick={publishArticle} disabled={isSaving || isPublishing} isLoading={isPublishing}>
+          <Button className="bg-green-500 hover:bg-green-600 px-8 hover-lift" onClick={publishArticle} disabled={isSaving || isPublishing} isLoading={isPublishing}>
             <Send className="h-4 w-4 mr-2" />
             发布文章
           </Button>

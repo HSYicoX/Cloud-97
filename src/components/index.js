@@ -10,3 +10,4 @@ export * from './FileTree.jsx';
 export * from './SyncHistory.jsx';
 export * from './RepositoryHeader.jsx';
 export * from './CodeViewer.jsx';
+export * from './MouseEffects.jsx';
