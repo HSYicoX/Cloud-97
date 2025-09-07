@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 // @ts-ignore;
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea, Tabs, TabsContent, TabsList, TabsTrigger, useToast, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Badge, Switch, Label } from '@/components/ui';
 // @ts-ignore;
-import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, Copy, Download, ArrowLeft, Tag, BookOpen, Send, FileText, X, Calendar, EyeOff, EyeIcon } from 'lucide-react';
+import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, Copy, Download, ArrowLeft, Tag, BookOpen, Send, FileText, X, Calendar, EyeOff, EyeIcon, Bookmark } from 'lucide-react';
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
@@ -29,7 +29,7 @@ export default function MarkdownEditor(props) {
   const fileInputRef = useRef(null);
   const coverImageInputRef = useRef(null);
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('# 欢迎使用Markdown编辑器\n\n这是一个示例内容，开始编写你的博客吧！\n\n## 功能特性\n- 实时预览\n- 代码高亮\n- 图片上传\n- 自动保存\n\n```javascript\nconsole.log(\"Hello, World!\");\n```');
+  const [content, setContent] = useState('# 欢迎使用Markdown编辑器\n\n这是一个示例内容，开始编写你的博客吧！\n\n## 功能特性\n- 实时预览\n- 代码高亮\n- 图片上传\n- 自动保存\n\n```javascript\nconsole.log("Hello, World!");\n```');
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
   const [category, setCategory] = useState('');
@@ -40,12 +40,12 @@ export default function MarkdownEditor(props) {
   const [coverPreview, setCoverPreview] = useState('');
   const [activeTab, setActiveTab] = useState('edit');
   const [uploadedImages, setUploadedImages] = useState([]);
- 极 const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [existingCategories, setExistingCategories] = useState(['前端开发', 'TypeScript', 'CSS', 'JavaScript', 'React', 'Vue', 'Node.js']);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [inputStatus, set极InputStatus] = useState({
+  const [inputStatus, setInputStatus] = useState({
     title: 'default',
     content: 'default',
     tags: 'default',
@@ -58,7 +58,7 @@ export default function MarkdownEditor(props) {
     category: ''
   });
   const [saveStatus, setSaveStatus] = useState('default');
-  const [publishStatus, setPublishStatus] = useState('default');
+ 极 const [publishStatus, setPublishStatus] = useState('default');
   const [saveMessage, setSaveMessage] = useState('');
   const [publishMessage, setPublishMessage] = useState('');
 
@@ -90,14 +90,14 @@ export default function MarkdownEditor(props) {
             ...prev,
             title: 'warning'
           }));
-          setInputMessages(prev => ({
+         极 setInputMessages(prev => ({
             ...prev,
             title: '标题太短'
           }));
           return true;
         } else {
           setInputStatus(prev => ({
-            ...极prev,
+            ...prev,
             title: 'success'
           }));
           setInputMessages(prev => ({
@@ -107,7 +107,7 @@ export default function MarkdownEditor(props) {
           return true;
         }
       case 'content':
-        if (!value.trim()) {
+        if (!极value.trim()) {
           setInputStatus(prev => ({
             ...prev,
             content: 'error'
@@ -166,4 +166,51 @@ export default function MarkdownEditor(props) {
             ...prev,
             category: 'warning'
           }));
-          setInputMessages(prev => (
+          setInputMessages(prev => ({
+            ...prev,
+            category: '请选择分类'
+          }));
+          return true;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            category: 'success'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            category: ''
+          }));
+          return true;
+        }
+      default:
+        return true;
+    }
+  };
+  const loadPostData = async () => {
+    try {
+      setIsLoading(true);
+      const result = await $w.cloud.callDataSource({
+        dataSourceName: 'blog_posts',
+        methodName: 'wedaGetItemV2',
+        params: {
+          filter: {
+            where: {
+              $and: [{
+                _id: {
+                  $eq: postId
+                }
+              }]
+            }
+          },
+          select: {
+            $master: true
+          }
+        }
+      });
+      if (result) {
+        setTitle(result.title || '');
+        setContent(result.content || '');
+        setTags(result.tags || []);
+        setCategory(result.category || '');
+        setExcerpt(result.excerpt || '');
+        setStatus(result.status || 'draft');
