@@ -9,6 +9,10 @@ import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, 
 import { Navigation } from '@/components/Navigation';
 // @ts-ignore;
 import { MouseEffects } from '@/components/MouseEffects';
+// @ts-ignore;
+import { RippleEffect } from '@/components/RippleEffect';
+// @ts-ignore;
+import { InputFeedback } from '@/components/InputFeedback';
 export default function MarkdownEditor(props) {
   const {
     $w
@@ -35,17 +39,162 @@ export default function MarkdownEditor(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [existingCategories, setExistingCategories] = useState(['前端开发', 'TypeScript', 'CSS', 'JavaScript', 'React', 'Vue', 'Node.js']);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [inputStatus, setInputStatus] = useState({
+    title: 'default',
+    content: 'default',
+    tags: 'default',
+    category: 'default'
+  });
+  const [inputMessages, setInputMessages] = useState({
+    title: '',
+    content: '',
+    tags: '',
+    category: ''
+  });
 
   // 从URL参数获取文章ID，判断是编辑还是新建
   const postId = $w.page.dataset.params?.id;
   const isNewPost = $w.page.dataset.params?.new === 'true';
   useEffect(() => {
     setIsLoaded(true);
-    if (postId && !isNewPost) {
+    if (post极Id && !isNewPost) {
       loadPostData();
     }
     return () => setIsLoaded(false);
   }, [postId, isNewPost]);
+  const validateInput = (field, value) => {
+    switch (field) {
+      case 'title':
+        if (!value.trim()) {
+          setInputStatus(prev => ({
+            ...prev,
+            title: 'error'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            title: '标题不能为空'
+          }));
+          return false;
+        } else if (value.trim().length < 2) {
+          setInputStatus(prev => ({
+            ...prev,
+            title: 'warning'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            title: '标题太短'
+          }));
+          return true;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            title: 'success'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            title: ''
+          }));
+          return true;
+        }
+      case 'content':
+        if (!value.trim()) {
+          setInputStatus(prev => ({
+            ...prev,
+            content: 'error'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            content: '内容不能为空'
+          }));
+          return false;
+        } else if (value.trim().length < 10) {
+          setInputStatus(prev => ({
+            ...prev,
+            content: 'warning'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            content: '内容太短'
+          }));
+          return true;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            content: 'success'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            content: ''
+          }));
+          return true;
+        }
+      case 'tags':
+        if (value && !/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)) {
+          setInputStatus(prev => ({
+            ...prev,
+            tags: 'error'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            tags: '标签只能包含字母、数字和中文'
+          }));
+          return false;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            tags: 'default'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            tags: ''
+          }));
+          return true;
+        }
+      case 'category':
+        if (!value) {
+          setInputStatus(prev => ({
+            ...prev,
+            category: 'warning'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            category: '请选择分类'
+          }));
+          return false;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            category: 'success'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            category: ''
+          }));
+          return true;
+        }
+      default:
+        return true;
+    }
+  };
+  const handleTitleChange = e => {
+    const value = e.target.value;
+    setTitle(value);
+    validateInput('title', value);
+  };
+  const handleContentChange = e => {
+    const value = e.target.value;
+    setContent(value);
+    validateInput('content', value);
+  };
+  const handleTagInputChange = e => {
+    const value = e.target.value;
+    setTagInput(value);
+    validateInput('tags', value);
+  };
+  const handleCategoryChange = value => {
+    setCategory(value);
+    validateInput('category', value);
+  };
   const loadPostData = async () => {
     try {
       setIsLoading(true);
@@ -79,6 +228,10 @@ export default function MarkdownEditor(props) {
         if (result.coverImage) {
           setCoverPreview(result.coverImage);
         }
+        // 验证已有数据
+        validateInput('title', result.title || '');
+        validateInput('content', result.content || '');
+        validateInput('category', result.category || '');
       }
     } catch (error) {
       console.error('加载文章数据失败:', error);
@@ -100,6 +253,7 @@ export default function MarkdownEditor(props) {
     setContent(newText);
     textarea.focus();
     textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length);
+    validateInput('content', newText);
   };
   const handleImageUpload = async event => {
     const file = event.target.files[0];
@@ -149,10 +303,20 @@ export default function MarkdownEditor(props) {
   const handleTagInput = e => {
     if (e.key === 'Enter' && tagInput.trim()) {
       e.preventDefault();
-      if (!tags.includes(tagInput.trim()) && tags.length < 5) {
-        setTags([...tags, tagInput.trim()]);
+      if (validateInput('tags', tagInput.trim())) {
+        if (!tags.includes(tagInput.trim()) && tags.length < 5) {
+          setTags([...tags, tagInput.trim()]);
+        }
+        setTagInput('');
+        setInputStatus(prev => ({
+          ...prev,
+          tags: 'default'
+        }));
+        setInputMessages(prev => ({
+          ...prev,
+          tags: ''
+        }));
       }
-      setTagInput('');
     }
   };
   const removeTag = tagToRemove => {
@@ -187,10 +351,10 @@ export default function MarkdownEditor(props) {
     URL.revokeObjectURL(url);
   };
   const saveDraft = async () => {
-    if (!title.trim()) {
+    if (!validateInput('title', title) || !validateInput('content', content)) {
       toast({
-        title: '警告',
-        description: '请输入文章标题',
+        title: '验证失败',
+        description: '请检查标题和内容',
         variant: 'destructive'
       });
       return;
@@ -264,18 +428,10 @@ export default function MarkdownEditor(props) {
     }
   };
   const publishArticle = async () => {
-    if (!title.trim()) {
+    if (!validateInput('title', title) || !validateInput('content', content)) {
       toast({
-        title: '警告',
-        description: '请输入文章标题',
-        variant: 'destructive'
-      });
-      return;
-    }
-    if (!content.trim()) {
-      toast({
-        title: '警告',
-        description: '请输入文章内容',
+        title: '验证失败',
+        description: '请检查标题和内容',
         variant: 'destructive'
       });
       return;
@@ -297,7 +453,7 @@ export default function MarkdownEditor(props) {
         isPublished: true,
         author: {
           name: currentUser?.name || 'Haokir',
-          avatar: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h极150&fit=crop&crop=face',
+          avatar: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
           bio: currentUser?.bio || '前端开发工程师 | React爱好者'
         },
         readTime: `${Math.ceil(content.length / 500)} min read`,
@@ -318,7 +474,7 @@ export default function MarkdownEditor(props) {
             filter: {
               where: {
                 $and: [{
-                  _id: {
+                  _极id: {
                     $eq: postId
                   }
                 }]
@@ -364,7 +520,18 @@ export default function MarkdownEditor(props) {
   };
   const renderMarkdown = text => {
     // 简单的Markdown解析
-    return text.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mb-4">$1</h1>').replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mb-3 mt-6">$1</h2>').replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold mb-2 mt-4">$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>').replace(/\*(.*?)\*/g, '<em class="italic">$1</em>').replace(/`(.*?)`/g, '<code class="bg-slate-700 px-1 py-0.5 rounded text-sm">$1</code>').replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg max-w-full h-auto my-4" />').replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline">$1</a>').replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>').replace(/\n/g, '<br/>');
+    return text.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mb-4">$1</h1>').replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mb-3 mt-6">$1</h2>').replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold mb-2 mt-4">$1</h3>').replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>').replace(/\*(.*?)\*/g, '<em class="italic">$1</em>').replace(/`(.*?)`/g, '<code class="bg-slate-700 px-1 py-0.5 rounded text-sm">$极1</code>').replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="rounded-lg max-w-full h-auto my-4" />').replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline">$1</a>').replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>').replace(/\n/g, '<br/>');
+  };
+  const getInputClass = field => {
+    const baseClass = 'bg-slate-700/50 border-slate-600 text-white focus-ring';
+    const statusClass = {
+      default: '',
+      loading: 'input-focus',
+      success: 'input-valid',
+      error: 'input-invalid',
+      warning: 'input-warning'
+    }[inputStatus[field]];
+    return `${baseClass} ${statusClass}`;
   };
   return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4 relative">
       {/* 鼠标特效 */}
@@ -377,26 +544,35 @@ export default function MarkdownEditor(props) {
         {/* Header */}
         <div className="bg-slate-800/40 backdrop-blur-md rounded-xl p-6 mb-6 border border-slate-700/50 glass-dark animate-fade-in">
           <div className="flex items-center justify-between mb-4">
-            <Button variant="ghost" className="text-slate-300 hover:text-white hover-lift" onClick={handleNavigateBack}>
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              返回
-            </Button>
+            <RippleEffect>
+              <Button variant="ghost" className="text-slate-300 hover:text-white hover-lift click-scale" onClick={handleNavigateBack}>
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                返回
+              </Button>
+            </RippleEffect>
             <div className="text-sm text-slate-400">
               {postId && !isNewPost ? '编辑文章' : '新建文章'}
             </div>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <Input placeholder="输入文章标题..." value={title} onChange={e => setTitle(e.target.value)} className="bg-slate-700/50 border-slate-600 text-white text-xl font-bold flex-1 focus-ring" />
+            <div className="flex-1">
+              <Input placeholder="输入文章标题..." value={title} onChange={handleTitleChange} className={`${getInputClass('title')} text-xl font-bold`} />
+              <InputFeedback status={inputStatus.title} message={inputMessages.title} />
+            </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={copyToClipboard} disabled={isLoading}>
-                <Copy className="h-4 w-4 mr-2" />
-                复制
-              </Button>
-              <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={downloadMarkdown} disabled={isLoading}>
-                <Download className="h-4 w-4 mr-2" />
-                下载
-              </Button>
+              <RippleEffect>
+                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={copyToClipboard} disabled={isLoading}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  复制
+                </Button>
+              </RippleEffect>
+              <RippleEffect>
+                <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={downloadMarkdown} disabled={isLoading}>
+                  <Download className="h-4 w-4 mr-2" />
+                  下载
+                </Button>
+              </RippleEffect>
             </div>
           </div>
         </div>
@@ -415,11 +591,12 @@ export default function MarkdownEditor(props) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <Input placeholder="输入标签并按回车添加 (最多5个)" value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyPress={handleTagInput} className="bg-slate-700/50 border-slate-600 text-white focus-ring" disabled={tags.length >= 5} />
+                <Input placeholder="输入标签并按回车添加 (最多5个)" value={tagInput} onChange={handleTagInputChange} onKeyPress={handleTagInput} className={getInputClass('tags')} disabled={tags.length >= 5} />
+                <InputFeedback status={inputStatus.tags} message={inputMessages.tags} />
                 {tags.length > 0 && <div className="flex flex-wrap gap-2">
-                    {tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30 hover-lift">
+                    {tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30 hover-lift click-scale">
                         {tag}
-                        <button onClick={() => removeTag(tag)} className="ml-1 hover:text-blue-100">
+                        <button onClick={() => removeTag(tag)} className="ml-1 hover:text-blue-100 click-scale">
                           <X className="h-3 w-3" />
                         </button>
                       </Badge>)}
@@ -439,8 +616,8 @@ export default function MarkdownEditor(props) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus-ring">
+              <Select value={category} onValueChange={handleCategoryChange}>
+                <SelectTrigger className={getInputClass('category')}>
                   <SelectValue placeholder="选择文章分类" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-slate-700">
@@ -449,6 +626,7 @@ export default function MarkdownEditor(props) {
                     </SelectItem>)}
                 </SelectContent>
               </Select>
+              <InputFeedback status={inputStatus.category} message={inputMessages.category} />
             </CardContent>
           </Card>
 
@@ -474,16 +652,20 @@ export default function MarkdownEditor(props) {
         </div>
 
         {/* Editor and Preview */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 glass-dark">
-            <TabsTrigger value="edit" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift">
-              <Edit className="h-4 w-4 mr-2" />
-              编辑
-            </TabsTrigger>
-            <TabsTrigger value="preview" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift">
-              <Eye className="h-4 w-4 mr-2" />
-              预览
-            </TabsTrigger>
+            <RippleEffect>
+              <TabsTrigger value="edit" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift click-scale">
+                <Edit className="h-4 w-4 mr-2" />
+                编辑
+              </TabsTrigger>
+            </RippleEffect>
+            <RippleEffect>
+              <TabsTrigger value="preview" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white hover-lift click-scale">
+                <Eye className="h-4 w-4 mr-2" />
+                预览
+              </TabsTrigger>
+            </RippleEffect>
           </TabsList>
 
           <TabsContent value="edit" className="mt-0 animate-fade-in">
@@ -491,42 +673,61 @@ export default function MarkdownEditor(props) {
               <CardContent className="p-0">
                 {/* Toolbar */}
                 <div className="flex flex-wrap gap-2 p-4 border-b border-slate-700/50">
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('**', '**', '粗体文字')} disabled={isLoading}>
-                    <Bold className="h-4 w-4 mr-2" />
-                    粗体
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('*', '*', '斜体文字')} disabled={isLoading}>
-                    <Italic className="h-4 w-4 mr-2" />
-                    斜体
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('`', '`', '代码')} disabled={isLoading}>
-                    <Code className="h-4 w-4 mr-2" />
-                    代码
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('[', '](url)', '链接文字')} disabled={isLoading}>
-                    <Link className="h-4 w-4 mr-2" />
-                    链接
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
-                    <Image className="h-4 w-4 mr-2" />
-                    图片
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('```\n', '\n```', '代码块')} disabled={isLoading}>
-                    <Code className="h-4 w-4 mr-2" />
-                    代码块
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('> ', '', '引用文字')} disabled={isLoading}>
-                    <Quote className="h-4 w-4 mr-2" />
-                    引用
-                  </Button>
-                  <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift" onClick={() => insertText('- ', '', '列表项')} disabled={isLoading}>
-                    <List className="h-4 w-4 mr-2" />
-                    列表
-                  </Button>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('**', '**', '粗体文字')} disabled={isLoading}>
+                      <Bold className="h-4 w-4 mr-2" />
+                      粗体
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('*', '*', '斜体文字')} disabled={isLoading}>
+                      <Italic className="h-4 w-4 mr-2" />
+                      斜体
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('`', '`', '代码')} disabled={isLoading}>
+                      <Code className="h-4 w-4 mr-2" />
+                      代码
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('[', '](url)', '链接文字')} disabled={isLoading}>
+                      <Link className="h-4 w-4 mr-2" />
+                      链接
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:极bg-slate-700 hover-lift click-scale" onClick={() => fileInputRef.current?.click()} disabled={isLoading}>
+                      <Image className="h-4 w-4 mr-2" />
+                      图片
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('```\n', '\n```', '代码块')} disabled={isLoading}>
+                      <极Code className="h-4 w-4 mr-2" />
+                      代码块
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('> ', '', '引用文字')} disabled={isLoading}>
+                      <Quote className="h-4 w-4 mr-2" />
+                      引用
+                    </Button>
+                  </RippleEffect>
+                  <RippleEffect>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover-lift click-scale" onClick={() => insertText('- ', '', '列表项')} disabled={isLoading}>
+                      <List className="h-4 w-4 mr-2" />
+                      列表
+                    </Button>
+                  </RippleEffect>
                 </div>
 
                 {/* Editor */}
-                <Textarea id="markdown-editor" value={content} onChange={e => setContent(e.target.value)} className="w-full h-96 bg-slate-800 border-0 text-white resize-none focus:ring-0 p-4 font-mono text-sm focus-ring" placeholder="开始编写你的博客内容..." />
+                <div className="relative">
+                  <Textarea id="markdown-editor" value={content} onChange={handleContentChange} className="w-full h-96 bg-slate-800 border-0 text-white resize-none focus:ring-0 p-4 font-mono text-sm focus-ring" placeholder="开始编写你的博客内容..." />
+                  <InputFeedback status={inputStatus.content} message={inputMessages.content} className="absolute bottom-2 right-2" />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -550,17 +751,23 @@ export default function MarkdownEditor(props) {
         <div className="flex gap-4 justify-end animate-fade-in" style={{
         animationDelay: '0.2s'
       }}>
-          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 px-8 hover-lift" onClick={handleNavigateBack}>
-            取消
-          </Button>
-          <Button className="bg-blue-500 hover:bg-blue-600 px-8 hover-lift" onClick={saveDraft} disabled={isSaving || isPublishing} isLoading={isSaving}>
-            <Save className="h-4 w-4 mr-2" />
-            保存草稿
-          </Button>
-          <Button className="bg-green-500 hover:bg-green-600 px-8 hover-lift" onClick={publishArticle} disabled={isSaving || isPublishing} isLoading={isPublishing}>
-            <Send className="h-4 w-4 mr-2" />
-            发布文章
-          </Button>
+          <RippleEffect>
+            <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 px-8 hover-lift click-scale" onClick={handleNavigateBack}>
+              取消
+            </Button>
+          </RippleEffect>
+          <RippleEffect>
+            <Button className="bg-blue-500 hover:bg-blue-600 px-8 hover-lift click-scale" onClick={saveDraft} disabled={isSaving || isPublishing} isLoading={isSaving}>
+              <Save className="h-4 w-4 mr-2" />
+              保存草稿
+            </Button>
+          </RippleEffect>
+          <RippleEffect>
+            <Button className="bg-green-500 hover:bg-green-600 px-8 hover-lift click-scale" onClick={publishArticle} disabled={isSaving || isPublishing} isLoading={isPublishing}>
+              <Send className="h-4 w-4 mr-2" />
+              发布文章
+            </Button>
+          </RippleEffect>
         </div>
 
         {/* Hidden file input for image upload */}

@@ -11,3 +11,5 @@ export * from './SyncHistory.jsx';
 export * from './RepositoryHeader.jsx';
 export * from './CodeViewer.jsx';
 export * from './MouseEffects.jsx';
+export * from './RippleEffect.jsx';
+export * from './InputFeedback.jsx';
