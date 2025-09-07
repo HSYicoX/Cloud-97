@@ -3,6 +3,7 @@ import EDITOR from '../pages/editor.jsx';
 import REPOSITORY from '../pages/repository.jsx';
 import BLOG from '../pages/blog.jsx';
 import PROFILE from '../pages/profile.jsx';
+import REGISTER from '../pages/register.jsx';
 export const routers = [{
   id: "index",
   component: INDEX
@@ -18,4 +19,7 @@ export const routers = [{
 }, {
   id: "profile",
   component: PROFILE
+}, {
+  id: "register",
+  component: REGISTER
 }]
