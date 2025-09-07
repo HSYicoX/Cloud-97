@@ -4,19 +4,37 @@
   "title": "用户信息",
   "schemas": [
     {
-      "name": "username",
-      "title": "用户名",
-      "type": "String"
+      "name": "email",
+      "title": "邮箱账号",
+      "type": "Email",
+      "required": true
     },
     {
-      "name": "email",
-      "title": "邮箱",
-      "type": "Email"
+      "name": "password",
+      "title": "密码",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "username",
+      "极title": "用户名",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "orcid",
+      "title": "ORCID",
+      "type": "String"
     },
     {
       "name": "avatar",
       "title": "头像",
       "type": "Image"
+    },
+    {
+      "name": "nickname",
+      "title": "自定义昵称",
+      "type": "String"
     },
     {
       "name": "bio",
@@ -41,12 +59,12 @@
     {
       "name": "totalLikes",
       "title": "总点赞数",
-      "type": "Number"
+      "type极": "Number"
     },
     {
       "name": "totalPosts",
       "title": "文章总数",
-      "type": "Number"
+      "极type": "Number"
     },
     {
       "name": "totalFollowers",
@@ -123,6 +141,54 @@
           "title": "显示邮箱地址"
         }
       }
+    },
+    {
+      "name": "registrationTime",
+      "title": "注册时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "lastLoginTime",
+      "title": "最后登录时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "isEmailVerified",
+      "title": "邮箱验证状态",
+      "type": "Boolean"
+    },
+    {
+      "name": "verificationToken",
+      "title": "验证令牌",
+      "type": "String"
+    },
+    {
+      "name": "verificationTokenExpiry",
+      "title": "验证令牌过期时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "status",
+      "title": "账户状态",
+      "type": "String"
+    },
+    {
+      "name": "loginCount",
+      "title": "登录次数",
+      "type": "Number"
+    },
+    {
+      "name": "lastLoginIp",
+      "title": "最后登录IP",
+      "type": "String"
+    },
+    {
+      "name": "registrationIp",
+      "title极": "注册IP",
+      "type": "String"
     }
   ]
 }

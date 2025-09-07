@@ -2,9 +2,12 @@
 [
   {
     "_id": "user_001",
-    "username": "Haokir",
     "email": "haokir@example.com",
+    "password": "$2b$10$rQb8pU7vJz9K1Yw3XqZV.O", // 加密后的密码
+    "username": "Haokir",
+    "orcid": "0000-0002-1825-0097",
     "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    "nickname": "浩奇",
     "bio": "前端开发工程师 | React爱好者 | 技术博客作者",
     "location": "上海",
     "website": "https://haokir.dev",
@@ -27,7 +30,7 @@
         "likes": 31
       },
       {
-        "month": "3月",
+        "month": "极3月",
         "views": 567,
         "likes": 18
       },
@@ -46,8 +49,139 @@
       "publicProfile": true,
       "showEmail": true
     },
+    "registrationTime": 1736870400000,
+    "lastLoginTime": 1736870400000,
+    "isEmailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "status": "active",
+    "loginCount": 42,
+    "lastLoginIp": "192.168.1.100",
+    "registrationIp": "192.168.1.100",
     "createdAt": 1736870400000,
     "updatedAt": 1736870400000
+  },
+  {
+    "_id": "user_002",
+    "email": "user2@example.com",
+    "password": "$2b$10$rQb8pU7vJz9K1Yw3XqZV.O",
+    "username": "TechWriter",
+    "orcid": "0000-0003-1415-9265",
+    "avatar": "https://images.unsplash.com/photo-157349极6359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
+    "nickname": "技术写手",
+    "bio": "技术文档工程师，专注于API文档和开发者体验",
+    "location": "北京",
+    "website": "https://techwriter.dev",
+    "totalViews": 1289,
+    "totalLikes": 67,
+    "totalPosts": 8,
+    "totalFollowers": 156,
+    "blogCount": 8,
+    "repositoryCount": 3,
+    "favoriteCount": 15,
+    "monthlyStats": [
+      {
+        "month": "1月",
+        "views": 456,
+        "likes": 18
+      },
+      {
+        "month": "2月",
+        "views": 321,
+        "likes": 12
+      },
+      {
+        "month": "3月",
+        "views": 289,
+        "likes": 22
+      },
+      {
+        "month": "4月",
+        "views": 223,
+        "likes": 15
+      }
+    ],
+    "notificationSettings": {
+      "commentNotifications": true,
+      "followerNotifications": false,
+      "marketingEmails": false
+    },
+    "privacySettings": {
+      "publicProfile": true,
+      "showEmail": false
+    },
+    "registrationTime": 1736784000000,
+    "lastLoginTime": 1736784000000,
+    "isEmailVerified": true,
+    "verificationToken": null,
+    "verificationTokenExpiry": null,
+    "status": "active",
+    "loginCount": 28,
+    "lastLoginIp": "192.168.1.101",
+    "registrationIp": "192.168.1.101",
+    "createdAt": 1736784000000,
+    "updatedAt": 1736784000000
+  },
+  {
+    "_id": "user_003",
+    "email": "user3@example.com",
+    "password": "$2b$10$rQb8pU7极vJz9K1Yw3XqZV.O",
+    "username": "DesignerPro",
+    "orcid": null,
+    "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150极&fit=crop&crop=face",
+    "nickname": "设计达人",
+    "bio": "UI/UX设计师，专注于用户体验和界面设计",
+    "location": "广州",
+    "website": "https://designerpro.com",
+    "totalViews": 987,
+    "totalLikes": 45,
+    "totalPosts": 6,
+    "totalFollowers": 89,
+    "blogCount": 6,
+    "repositoryCount": 2,
+    "favoriteCount": 8,
+    "monthlyStats": [
+      {
+        "month": "1月",
+        "views": 234,
+        "likes": 10
+      },
+      {
+        "month": "2月",
+        "views": 198,
+        "likes": 8
+      },
+      {
+        "month": "3月",
+        "views": 321,
+        "likes": 15
+      },
+      {
+        "month": "4月",
+        "views": 234,
+        "likes": 12
+      }
+    ],
+    "notificationSettings": {
+      "commentNotifications": false,
+      "followerNotifications": true,
+极      "marketingEmails": true
+    },
+    "privacySettings": {
+      "publicProfile": false,
+      "showEmail": false
+    },
+    "registrationTime": 1736697600000,
+    "lastLoginTime": 1736697600000,
+    "isEmailVerified": false,
+    "verificationToken": "abc123def456",
+    "verificationTokenExpiry": 1736960400000,
+    "status": "pending_verification",
+    "loginCount": 5,
+    "lastLoginIp": "192.168.1.102",
+    "registrationIp": "192.168.1.102",
+    "createdAt": 1736697600000,
+    "updated极At": 1736697600000
   }
 ]
   

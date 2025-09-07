@@ -1,9 +1,9 @@
 // @ts-ignore;
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // @ts-ignore;
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, useToast } from '@/components/ui';
 // @ts-ignore;
-import { Mail, Lock, User, Hash, Shield, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Hash, Shield, CheckCircle, XCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
@@ -30,402 +30,348 @@ export default function RegisterPage(props) {
     email: '',
     password: '',
     username: '',
-    orcid: '',
-    nickname: '',
-    verificationCode: ''
+    orcid: ''
   });
-  const [formStatus, setFormStatus] = useState({
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaCode, setCaptchaCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputStatus, setInputStatus] = useState({
     email: 'default',
     password: 'default',
+    confirmPassword: 'default',
     username: 'default',
     orcid: 'default',
-    verificationCode: 'default'
+    captcha: 'default'
   });
-  const [formMessages, setFormMessages] = useState({
+  const [inputMessages, setInputMessages] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     username: '',
     orcid: '',
-    verificationCode: ''
+    captcha: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState('default');
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [verificationSent, setVerificationSent] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-
-  // 验证邮箱格式
+  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [registerStatus, setRegisterStatus] = useState('default');
+  const [registerMessage, setRegisterMessage] = useState('');
   const validateEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       return {
-        isValid: false,
+        valid: false,
         message: '邮箱不能为空'
       };
     }
     if (!emailRegex.test(email)) {
       return {
-        isValid: false,
+        valid: false,
         message: '请输入有效的邮箱地址'
       };
     }
     return {
-      isValid: true,
+      valid: true,
       message: ''
     };
   };
-
-  // 验证密码强度
   const validatePassword = password => {
     if (!password) {
       return {
-        isValid: false,
-        message: '密码不能为空'
+        valid: false,
+        message: '密码不能为空',
+        strength: 0
       };
     }
     if (password.length < 8) {
       return {
-        isValid: false,
-        message: '密码至少需要8个字符'
+        valid: false,
+        message: '密码至少需要8个字符',
+        strength: 1
       };
     }
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      return {
-        isValid: false,
-        message: '密码必须包含大小写字母和数字'
-      };
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    let message = '';
+    if (strength <= 2) {
+      message = '密码强度较弱';
+    } else if (strength <= 4) {
+      message = '密码强度中等';
+    } else {
+      message = '密码强度强';
     }
     return {
-      isValid: true,
-      message: ''
+      valid: true,
+      message,
+      strength
     };
   };
-
-  // 验证用户名
   const validateUsername = username => {
     if (!username) {
       return {
-        isValid: false,
+        valid: false,
         message: '用户名不能为空'
       };
     }
-    if (username.length < 3) {
+    if (username.length < 2) {
       return {
-        isValid: false,
-        message: '用户名至少需要3个字符'
+        valid: false,
+        message: '用户名至少需要2个字符'
+      };
+    }
+    if (username.length > 20) {
+      return {
+        valid: false,
+        message: '用户名不能超过20个字符'
       };
     }
     if (!/^[a-zA-Z0-9_\u4e00-\u9fa5]+$/.test(username)) {
       return {
-        isValid: false,
+        valid: false,
         message: '用户名只能包含字母、数字、下划线和中文字符'
       };
     }
     return {
-      isValid: true,
+      valid: true,
       message: ''
     };
   };
-
-  // 验证ORCID格式
-  const validateOrcid = orcid => {
-    if (!orcid) return {
-      isValid: true,
-      message: ''
-    };
+  const validateORCID = orcid => {
+    if (!orcid) {
+      return {
+        valid: true,
+        message: ''
+      };
+    }
     const orcidRegex = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/;
     if (!orcidRegex.test(orcid)) {
       return {
-        isValid: false,
-        message: '请输入有效的ORCID格式（如：0000-0000-0000-0000）'
+        valid: false,
+        message: '请输入有效的ORCID格式（XXXX-XXXX-XXXX-XXX）'
       };
     }
     return {
-      isValid: true,
+      valid: true,
       message: ''
     };
   };
-
-  // 验证验证码
-  const validateVerificationCode = code => {
+  const validateCaptcha = code => {
     if (!code) {
       return {
-        isValid: false,
-        message: '验证码不能为空'
+        valid: false,
+        message: '请输入验证码'
       };
     }
     if (code.length !== 6) {
       return {
-        isValid: false,
+        valid: false,
         message: '验证码必须是6位数字'
       };
     }
     if (!/^\d+$/.test(code)) {
       return {
-        isValid: false,
+        valid: false,
         message: '验证码必须是数字'
       };
     }
     return {
-      isValid: true,
+      valid: true,
       message: ''
     };
   };
-
-  // 处理输入变化
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-
-    // 实时验证
-    let validationResult;
+    let validation;
     switch (field) {
       case 'email':
-        validationResult = validateEmail(value);
+        validation = validateEmail(value);
         break;
       case 'password':
-        validationResult = validatePassword(value);
+        validation = validatePassword(value);
+        setPasswordStrength(validation.strength || 0);
         break;
       case 'username':
-        validationResult = validateUsername(value);
+        validation = validateUsername(value);
         break;
       case 'orcid':
-        validationResult = validateOrcid(value);
-        break;
-      case 'verificationCode':
-        validationResult = validateVerificationCode(value);
+        validation = validateORCID(value);
         break;
       default:
-        validationResult = {
-          isValid: true,
+        validation = {
+          valid: true,
           message: ''
         };
     }
-    setFormStatus(prev => ({
+    setInputStatus(prev => ({
       ...prev,
-      [field]: validationResult.isValid ? 'success' : 'error'
+      [field]: validation.valid ? 'success' : 'error'
     }));
-    setFormMessages(prev => ({
+    setInputMessages(prev => ({
       ...prev,
-      [field]: validationResult.message
+      [field]: validation.message
     }));
   };
-
-  // 发送验证码
-  const handleSendVerificationCode = async () => {
-    // 先验证邮箱
+  const handleConfirmPasswordChange = value => {
+    setConfirmPassword(value);
+    const validation = value === formData.password ? {
+      valid: true,
+      message: ''
+    } : {
+      valid: false,
+      message: '密码不一致'
+    };
+    setInputStatus(prev => ({
+      ...prev,
+      confirmPassword: validation.valid ? 'success' : 'error'
+    }));
+    setInputMessages(prev => ({
+      ...prev,
+      confirmPassword: validation.message
+    }));
+  };
+  const handleCaptchaChange = value => {
+    setCaptchaCode(value);
+    const validation = validateCaptcha(value);
+    setInputStatus(prev => ({
+      ...prev,
+      captcha: validation.valid ? 'success' : 'error'
+    }));
+    setInputMessages(prev => ({
+      ...prev,
+      captcha: validation.message
+    }));
+  };
+  const sendCaptcha = async () => {
     const emailValidation = validateEmail(formData.email);
-    if (!emailValidation.isValid) {
-      setFormStatus(prev => ({
+    if (!emailValidation.valid) {
+      setInputStatus(prev => ({
         ...prev,
         email: 'error'
       }));
-      setFormMessages(prev => ({
+      setInputMessages(prev => ({
         ...prev,
         email: emailValidation.message
       }));
+      toast({
+        title: '验证失败',
+        description: '请先输入有效的邮箱地址',
+        variant: 'destructive'
+      });
       return;
     }
-    setIsLoading(true);
     try {
-      // 调用腾讯云验证码服务（模拟）
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 模拟发送验证码成功
-      setVerificationSent(true);
-      setCountdown(60);
-
-      // 启动倒计时
-      const timer = setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      // 模拟发送验证码
       toast({
         title: '验证码已发送',
-        description: '验证码已发送到您的邮箱，请查收'
+        description: `验证码已发送到 ${formData.email}，请查收`
       });
+      // 这里应该调用腾讯云验证码API
+      // await $w.cloud.callFunction({
+      //   name: 'sendCaptcha',
+      //   data: { email: formData.email }
+      // });
     } catch (error) {
       toast({
         title: '发送失败',
         description: '验证码发送失败，请稍后重试',
         variant: 'destructive'
       });
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  // 检查用户名是否已存在
-  const checkUsernameExists = async username => {
-    try {
-      const result = await $w.cloud.callDataSource({
-        dataSourceName: 'user_registrations',
-        methodName: 'wedaGetRecordsV2',
-        params: {
-          filter: {
-            where: {
-              $and: [{
-                username: {
-                  $eq: username
-                }
-              }]
-            }
-          },
-          select: {
-            $master: true
-          },
-          pageSize: 1
-        }
-      });
-      return result?.records?.length > 0;
-    } catch (error) {
-      console.error('检查用户名失败:', error);
-      return false;
-    }
-  };
-
-  // 检查邮箱是否已注册
-  const checkEmailExists = async email => {
-    try {
-      const result = await $w.cloud.callDataSource({
-        dataSourceName: 'user_registrations',
-        methodName: 'wedaGetRecordsV2',
-        params: {
-          filter: {
-            where: {
-              $and: [{
-                email: {
-                  $eq: email
-                }
-              }]
-            }
-          },
-          select: {
-            $master: true
-          },
-          pageSize: 1
-        }
-      });
-      return result?.records?.length > 0;
-    } catch (error) {
-      console.error('检查邮箱失败:', error);
-      return false;
-    }
-  };
-
-  // 处理表单提交
-  const handleSubmit = async e => {
-    e.preventDefault();
-
+  const handleRegister = async () => {
     // 验证所有字段
     const emailValidation = validateEmail(formData.email);
     const passwordValidation = validatePassword(formData.password);
     const usernameValidation = validateUsername(formData.username);
-    const orcidValidation = validateOrcid(formData.orcid);
-    const codeValidation = validateVerificationCode(formData.verificationCode);
-    if (!emailValidation.isValid || !passwordValidation.isValid || !usernameValidation.isValid || !orcidValidation.isValid || !codeValidation.isValid) {
-      setFormStatus({
-        email: emailValidation.isValid ? 'success' : 'error',
-        password: passwordValidation.isValid ? 'success' : 'error',
-        username: usernameValidation.isValid ? 'success' : 'error',
-        orcid: orcidValidation.isValid ? 'success' : 'error',
-        verificationCode: codeValidation.isValid ? 'success' : 'error'
+    const orcidValidation = validateORCID(formData.orcid);
+    const captchaValidation = validateCaptcha(captchaCode);
+    const confirmValidation = confirmPassword === formData.password ? {
+      valid: true,
+      message: ''
+    } : {
+      valid: false,
+      message: '密码不一致'
+    };
+    if (!emailValidation.valid || !passwordValidation.valid || !usernameValidation.valid || !orcidValidation.valid || !captchaValidation.valid || !confirmValidation.valid) {
+      setInputStatus({
+        email: emailValidation.valid ? 'success' : 'error',
+        password: passwordValidation.valid ? 'success' : 'error',
+        confirmPassword: confirmValidation.valid ? 'success' : 'error',
+        username: usernameValidation.valid ? 'success' : 'error',
+        orcid: orcidValidation.valid ? 'success' : 'error',
+        captcha: captchaValidation.valid ? 'success' : 'error'
       });
-      setFormMessages({
+      setInputMessages({
         email: emailValidation.message,
         password: passwordValidation.message,
+        confirmPassword: confirmValidation.message,
         username: usernameValidation.message,
         orcid: orcidValidation.message,
-        verificationCode: codeValidation.message
+        captcha: captchaValidation.message
+      });
+      toast({
+        title: '验证失败',
+        description: '请检查表单填写是否正确',
+        variant: 'destructive'
       });
       return;
     }
-
-    // 检查用户名和邮箱是否已存在
-    setIsSubmitting(true);
-    setSubmitStatus('loading');
-    setSubmitMessage('正在检查用户信息...');
     try {
-      const [usernameExists, emailExists] = await Promise.all([checkUsernameExists(formData.username), checkEmailExists(formData.email)]);
-      if (usernameExists) {
-        setFormStatus(prev => ({
-          ...prev,
-          username: 'error'
-        }));
-        setFormMessages(prev => ({
-          ...prev,
-          username: '用户名已被使用'
-        }));
-        setSubmitStatus('error');
-        setSubmitMessage('用户名已被使用，请选择其他用户名');
-        return;
-      }
-      if (emailExists) {
-        setFormStatus(prev => ({
-          ...prev,
-          email: 'error'
-        }));
-        setFormMessages(prev => ({
-          ...prev,
-          email: '邮箱已被注册'
-        }));
-        setSubmitStatus('error');
-        setSubmitMessage('邮箱已被注册，请使用其他邮箱或尝试登录');
-        return;
-      }
-
-      // 验证验证码（模拟验证）
-      if (formData.verificationCode !== '123456') {
-        // 模拟验证码
-        setFormStatus(prev => ({
-          ...prev,
-          verificationCode: 'error'
-        }));
-        setFormMessages(prev => ({
-          ...prev,
-          verificationCode: '验证码错误'
-        }));
-        setSubmitStatus('error');
-        setSubmitMessage('验证码错误，请重新获取');
-        return;
-      }
-
-      // 创建用户
-      setSubmitMessage('正在创建账户...');
+      setIsLoading(true);
+      setRegisterStatus('loading');
+      setRegisterMessage('正在注册账号...');
+      // 创建用户数据
+      const userData = {
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        // 注意：实际应用中应该加密存储
+        orcid: formData.orcid || '',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face',
+        bio: '',
+        blogCount: 0,
+        favoriteCount: 0,
+        repositoryCount: 0,
+        totalFollowers: 0,
+        totalLikes: 0,
+        totalPosts: 0,
+        totalViews: 0,
+        location: '',
+        website: '',
+        notificationSettings: {
+          commentNotifications: true,
+          followerNotifications: true,
+          marketingEmails: false
+        },
+        privacySettings: {
+          publicProfile: true,
+          showEmail: false
+        },
+        monthlyStats: [],
+        createdAt: new Date().getTime(),
+        updatedAt: new Date().getTime()
+      };
+      // 保存用户数据到数据库
       const result = await $w.cloud.callDataSource({
-        dataSourceName: 'user_registrations',
+        dataSourceName: 'users',
         methodName: 'wedaCreateV2',
         params: {
-          data: {
-            email: formData.email,
-            password: formData.password,
-            // 注意：实际应用中应该加密存储
-            username: formData.username,
-            orcid: formData.orcid || undefined,
-            nickname: formData.nickname || formData.username,
-            registrationTime: new Date().getTime(),
-            lastLoginTime: new Date().getTime(),
-            isEmailVerified: false,
-            status: 'active',
-            loginCount: 1
-          }
+          data: userData
         }
       });
-      setSubmitStatus('success');
-      setSubmitMessage('注册成功！正在跳转到登录页面...');
+      setRegisterStatus('success');
+      setRegisterMessage('注册成功！正在跳转到登录页面...');
       toast({
         title: '注册成功',
-        description: '您的账户已成功创建'
+        description: '账号已成功创建，请登录使用'
       });
-
       // 3秒后跳转到登录页面
       setTimeout(() => {
         $w.utils.navigateTo({
@@ -435,140 +381,187 @@ export default function RegisterPage(props) {
       }, 3000);
     } catch (error) {
       console.error('注册失败:', error);
-      setSubmitStatus('error');
-      setSubmitMessage('注册失败，请稍后重试');
+      setRegisterStatus('error');
+      setRegisterMessage('注册失败：邮箱可能已被使用');
       toast({
         title: '注册失败',
-        description: error.message || '注册过程中出现错误',
+        description: error.message || '注册失败，请稍后重试',
         variant: 'destructive'
       });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
   const handleNavigateBack = () => {
     $w.utils.navigateBack();
   };
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+  const getInputClass = field => {
+    const baseClass = 'bg-slate-700/50 border-slate-600 text-white focus-ring pr-10';
+    const statusClass = {
+      default: '',
+      success: 'input-valid',
+      error: 'input-invalid',
+      warning: 'input-warning'
+    }[inputStatus[field]];
+    return `${baseClass} ${statusClass}`;
+  };
+  const getPasswordStrengthColor = strength => {
+    if (strength <= 2) return 'bg-red-500';
+    if (strength <= 4) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+  const getPasswordStrengthText = strength => {
+    if (strength <= 2) return '弱';
+    if (strength <= 4) return '中';
+    return '强';
+  };
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4 relative">
       {/* 鼠标特效 */}
       <MouseEffects />
       
       {/* Navigation */}
       <Navigation $w={$w} currentPage="register" />
       
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-md mx-auto">
-          {/* 返回按钮 */}
+      <div className="container mx-auto max-w-md pt-16">
+        {/* Header */}
+        <div className="text-center mb-8 animate-fade-in">
           <RippleEffect>
-            <Button variant="ghost" className="text-slate-300 hover:text-white mb-6 hover-lift click-scale" onClick={handleNavigateBack}>
+            <Button variant="ghost" className="text-slate-300 hover:text-white absolute left-4 top-20 hover-lift click-scale" onClick={handleNavigateBack}>
               <ArrowLeft className="h-5 w-5 mr-2" />
               返回
             </Button>
           </RippleEffect>
-
-          {/* 注册卡片 */}
-          <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center text-white">
-                创建账户
-              </CardTitle>
-            </CardHeader>
-            
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* 邮箱输入 */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-300 flex items-center">
-                    <Mail className="h-4 w-4 mr-2" />
-                    邮箱账号
-                  </Label>
-                  <Input id="email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} placeholder="请输入您的邮箱" className={`bg-slate-700/50 border-slate-600 text-white focus-ring ${formStatus.email === 'error' ? 'input-invalid' : formStatus.email === 'success' ? 'input-valid' : ''}`} disabled={isSubmitting} />
-                  <InputFeedback status={formStatus.email} message={formMessages.email} />
-                </div>
-
-                {/* 密码输入 */}
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-300 flex items-center">
-                    <Lock className="h-4 w-4 mr-2" />
-                    密码
-                  </Label>
-                  <Input id="password" type="password" value={formData.password} onChange={e => handleInputChange('password', e.target.value)} placeholder="请输入密码（至少8位，包含大小写字母和数字）" className={`bg-slate-700/50 border-slate-600 text-white focus-ring ${formStatus.password === 'error' ? 'input-invalid' : formStatus.password === 'success' ? 'input-valid' : ''}`} disabled={isSubmitting} />
-                  <InputFeedback status={formStatus.password} message={formMessages.password} />
-                </div>
-
-                {/* 用户名输入 */}
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-slate-300 flex items-center">
-                    <User className="h-4 w-4 mr-2" />
-                    用户名
-                  </Label>
-                  <Input id="username" type="text" value={formData.username} onChange={e => handleInputChange('username', e.target.value)} placeholder="请输入用户名（3-20个字符）" className={`bg-slate-700/50 border-slate-600 text-white focus-ring ${formStatus.username === 'error' ? 'input-invalid' : formStatus.username === 'success' ? 'input-valid' : ''}`} disabled={isSubmitting} />
-                  <InputFeedback status={formStatus.username} message={formMessages.username} />
-                </div>
-
-                {/* ORCID输入 */}
-                <div className="space-y-2">
-                  <Label htmlFor="orcid" className="text-slate-300 flex items-center">
-                    <Hash className="h-4 w-4 mr-2" />
-                    ORCID（可选）
-                  </Label>
-                  <Input id="orcid" type="text" value={formData.orcid} onChange={e => handleInputChange('orcid', e.target.value)} placeholder="例如：0000-0000-0000-0000" className={`bg-slate-700/50 border-slate-600 text-white focus-ring ${formStatus.orcid === 'error' ? 'input-invalid' : formStatus.orcid === 'success' ? 'input-valid' : ''}`} disabled={isSubmitting} />
-                  <InputFeedback status={formStatus.orcid} message={formMessages.orcid} />
-                </div>
-
-                {/* 验证码区域 */}
-                <div className="space-y-2">
-                  <Label htmlFor="verificationCode" className="text-slate-300 flex items-center">
-                    <Shield className="h-4 w-4 mr-2" />
-                    验证码
-                  </Label>
-                  <div className="flex space-x-2">
-                    <Input id="verificationCode" type="text" value={formData.verificationCode} onChange={e => handleInputChange('verificationCode', e.target.value)} placeholder="请输入6位验证码" className={`flex-1 bg-slate-700/50 border-slate-600 text-white focus-ring ${formStatus.verificationCode === 'error' ? 'input-invalid' : formStatus.verificationCode === 'success' ? 'input-valid' : ''}`} disabled={isSubmitting || !verificationSent} />
-                    <RippleEffect>
-                      <Button type="button" onClick={handleSendVerificationCode} disabled={isLoading || countdown > 0 || !formData.email || formStatus.email === 'error'} className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap">
-                        {isLoading ? <LoadingSpinner size="sm" /> : countdown > 0 ? `${countdown}s` : '获取验证码'}
-                      </Button>
-                    </RippleEffect>
-                  </div>
-                  <InputFeedback status={formStatus.verificationCode} message={formMessages.verificationCode} />
-                </div>
-
-                {/* 提交状态提示 */}
-                {submitMessage && <FormStatus status={submitStatus} message={submitMessage} />}
-
-                {/* 提交按钮 */}
-                <SubmitButton type="submit" isLoading={isSubmitting} isSuccess={submitStatus === 'success'} isError={submitStatus === 'error'} successText="注册成功" errorText="注册失败" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg hover-lift click-scale">
-                  注册账户
-                </SubmitButton>
-
-                {/* 隐私条款提示 */}
-                <p className="text-xs text-slate-400 text-center">
-                  点击注册即表示您同意我们的
-                  <button type="button" className="text-blue-400 hover:text-blue-300 underline ml-1">
-                    服务条款
-                  </button>
-                  和
-                  <button type="button" className="text-blue-400 hover:text-blue-300 underline ml-1">
-                    隐私政策
-                  </button>
-                </p>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* 已有账户提示 */}
-          <div className="text-center mt-6">
-            <p className="text-slate-400">
-              已有账户？{' '}
-              <button type="button" className="text-blue-400 hover:text-blue-300 underline" onClick={() => $w.utils.navigateTo({
-              pageId: 'login',
-              params: {}
-            })}>
-                立即登录
-              </button>
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">创建账号</h1>
+          <p className="text-slate-400">加入我们，开始您的技术之旅</p>
         </div>
+
+        {/* Register Form */}
+        <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 glass-dark animate-fade-in-up">
+          <CardContent className="p-6">
+            <form onSubmit={e => e.preventDefault()} className="space-y-4">
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-slate-300">邮箱地址</Label>
+                <div className="relative">
+                  <Input id="email" type="email" placeholder="请输入邮箱地址" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} className={getInputClass('email')} disabled={isLoading} />
+                  <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                </div>
+                <InputFeedback status={inputStatus.email} message={inputMessages.email} />
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-slate-300">密码</Label>
+                <div className="relative">
+                  <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="请输入密码（至少8位）" value={formData.password} onChange={e => handleInputChange('password', e.target.value)} className={getInputClass('password')} disabled={isLoading} />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                    <RippleEffect>
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-slate-400 hover:text-white click-scale" disabled={isLoading}>
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </RippleEffect>
+                    <Lock className="h-4 w-4 text-slate-400" />
+                  </div>
+                </div>
+                {formData.password && <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">密码强度</span>
+                      <span className={`text-xs ${getPasswordStrengthColor(passwordStrength)} text-white px-2 py-1 rounded`}>
+                        {getPasswordStrengthText(passwordStrength)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-1">
+                      <div className={`h-1 rounded-full ${getPasswordStrengthColor(passwordStrength)} transition-all duration-300`} style={{
+                    width: `${passwordStrength / 5 * 100}%`
+                  }} />
+                    </div>
+                  </div>}
+                <InputFeedback status={inputStatus.password} message={inputMessages.password} />
+              </div>
+
+              {/* Confirm Password */}
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-slate-300">确认密码</Label>
+                <div className="relative">
+                  <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder="请再次输入密码" value={confirmPassword} onChange={e => handleConfirmPasswordChange(e.target.value)} className={getInputClass('confirmPassword')} disabled={isLoading} />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                    <RippleEffect>
+                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="text-slate-400 hover:text-white click-scale" disabled={isLoading}>
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </RippleEffect>
+                    <Shield className="h-4 w-4 text-slate-400" />
+                  </div>
+                </div>
+                <InputFeedback status={inputStatus.confirmPassword} message={inputMessages.confirmPassword} />
+              </div>
+
+              {/* Username */}
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-slate-300">用户名</Label>
+                <div className="relative">
+                  <Input id="username" type="text" placeholder="请输入用户名（2-20个字符）" value={formData.username} onChange={e => handleInputChange('username', e.target.value)} className={getInputClass('username')} disabled={isLoading} />
+                  <User className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                </div>
+                <InputFeedback status={inputStatus.username} message={inputMessages.username} />
+              </div>
+
+              {/* ORCID (Optional) */}
+              <div className="space-y-2">
+                <Label htmlFor="orcid" className="text-slate-300">
+                  ORCID <span className="text-slate-500 text-sm">（可选）</span>
+                </Label>
+                <div className="relative">
+                  <Input id="orcid" type="text" placeholder="XXXX-XXXX-XXXX-XXX" value={formData.orcid} onChange={e => handleInputChange('orcid', e.target.value)} className={getInputClass('orcid')} disabled={isLoading} />
+                  <Hash className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                </div>
+                <InputFeedback status={inputStatus.orcid} message={inputMessages.orcid} />
+              </div>
+
+              {/* Captcha */}
+              <div className="space-y-2">
+                <Label htmlFor="captcha" className="text-slate-300">验证码</Label>
+                <div className="flex space-x-2">
+                  <div className="flex-1 relative">
+                    <Input id="captcha" type="text" placeholder="请输入6位验证码" value={captchaCode} onChange={e => handleCaptchaChange(e.target.value)} className={getInputClass('captcha')} disabled={isLoading} maxLength={6} />
+                    <Shield className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  </div>
+                  <RippleEffect>
+                    <Button type="button" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 whitespace-nowrap click-scale" onClick={sendCaptcha} disabled={isLoading}>
+                      获取验证码
+                    </Button>
+                  </RippleEffect>
+                </div>
+                <InputFeedback status={inputStatus.captcha} message={inputMessages.captcha} />
+              </div>
+
+              {/* Form Status */}
+              {registerStatus !== 'default' && <FormStatus status={registerStatus} message={registerMessage} className="mt-4" />}
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <SubmitButton isLoading={isLoading} isSuccess={registerStatus === 'success'} isError={registerStatus === 'error'} successText="注册成功" errorText="注册失败" onClick={handleRegister} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg click-scale" disabled={isLoading}>
+                  注册账号
+                </SubmitButton>
+              </div>
+            </form>
+
+            {/* Login Link */}
+            <div className="text-center mt-6 pt-4 border-t border-slate-700/50">
+              <p className="text-slate-400 text-sm">
+                已有账号？{' '}
+                <RippleEffect>
+                  <button type="button" onClick={() => $w.utils.navigateTo({
+                  pageId: 'login',
+                  params: {}
+                })} className="text-blue-400 hover:text-blue-300 underline click-scale" disabled={isLoading}>
+                    立即登录
+                  </button>
+                </RippleEffect>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>;
 }
