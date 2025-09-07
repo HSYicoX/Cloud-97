@@ -61,6 +61,7 @@ export default function MarkdownEditor(props) {
   const [publishStatus, setPublishStatus] = useState('default');
   const [saveMessage, setSaveMessage] = useState('');
   const [publishMessage, setPublishMessage] = useState('');
+  const [uploadedCoverImageUrl, setUploadedCoverImageUrl] = useState('');
 
   // 从URL参数获取文章ID，判断是编辑还是新建
   const postId = $w.page.dataset.params?.id;
@@ -105,6 +106,7 @@ export default function MarkdownEditor(props) {
         setIsPublished(result.isPublished || false);
         setCoverImage(result.coverImage || '');
         setCoverPreview(result.coverImage || '');
+        setUploadedCoverImageUrl(result.coverImage || '');
       }
     } catch (error) {
       console.error('加载文章失败:', error);
@@ -284,8 +286,33 @@ export default function MarkdownEditor(props) {
     setStatus(checked ? 'published' : 'draft');
   };
 
+  // 上传图片到云存储
+  const uploadImageToCloud = async file => {
+    try {
+      const tcb = await $w.cloud.getCloudInstance();
+      const timestamp = new Date().getTime();
+      const fileName = `blog-covers/${timestamp}-${file.name}`;
+      const uploadResult = await tcb.uploadFile({
+        cloudPath: fileName,
+        filePath: file
+      });
+      if (uploadResult.fileID) {
+        const tempUrlResult = await tcb.getTempFileURL({
+          fileList: [uploadResult.fileID]
+        });
+        if (tempUrlResult.fileList && tempUrlResult.fileList[0]) {
+          return tempUrlResult.fileList[0].tempFileURL;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error('图片上传失败:', error);
+      throw new Error('图片上传失败');
+    }
+  };
+
   // 处理封面图片选择
-  const handleCoverImageSelect = e => {
+  const handleCoverImageSelect = async e => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -304,12 +331,36 @@ export default function MarkdownEditor(props) {
         });
         return;
       }
+
+      // 显示预览
       const reader = new FileReader();
       reader.onload = e => {
         setCoverPreview(e.target.result);
       };
       reader.readAsDataURL(file);
-      setCoverImage(file);
+
+      // 上传到云存储
+      try {
+        setIsLoading(true);
+        const imageUrl = await uploadImageToCloud(file);
+        if (imageUrl) {
+          setCoverImage(imageUrl);
+          setUploadedCoverImageUrl(imageUrl);
+          toast({
+            title: '上传成功',
+            description: '封面图片已上传',
+            variant: 'default'
+          });
+        }
+      } catch (error) {
+        toast({
+          title: '上传失败',
+          description: error.message || '封面图片上传失败',
+          variant: 'destructive'
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -317,6 +368,7 @@ export default function MarkdownEditor(props) {
   const handleRemoveCoverImage = () => {
     setCoverImage('');
     setCoverPreview('');
+    setUploadedCoverImageUrl('');
   };
 
   // 保存草稿
@@ -346,11 +398,11 @@ export default function MarkdownEditor(props) {
         status: 'draft',
         isPublished: false,
         isDraft: true,
-        coverImage: coverImage,
+        coverImage: uploadedCoverImageUrl,
+        // 使用上传后的图片URL
         author: {
           name: currentUser?.name || '匿名用户',
-          avatar: currentUser?.avatarUrl || '',
-          bio: currentUser?.bio || ''
+          avatar: currentUser?.avatarUrl || ''
         },
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime()
@@ -374,6 +426,7 @@ export default function MarkdownEditor(props) {
             }
           }
         });
+        console.log('更新草稿成功:', result);
       } else {
         // 创建新文章
         result = await $w.cloud.callDataSource({
@@ -383,12 +436,14 @@ export default function MarkdownEditor(props) {
             data: postData
           }
         });
+        console.log('创建草稿成功:', result);
       }
       setSaveStatus('success');
       setSaveMessage('草稿保存成功！');
       toast({
         title: '保存成功',
-        description: '文章已保存为草稿'
+        description: '文章已保存为草稿',
+        variant: 'default'
       });
 
       // 如果是新文章，更新URL参数
@@ -396,7 +451,8 @@ export default function MarkdownEditor(props) {
         $w.utils.navigateTo({
           pageId: 'editor',
           params: {
-            id: result.id
+            id: result.id,
+            new: 'false'
           }
         });
       }
@@ -442,11 +498,11 @@ export default function MarkdownEditor(props) {
         status: 'published',
         isPublished: true,
         isDraft: false,
-        coverImage: coverImage,
+        coverImage: uploadedCoverImageUrl,
+        // 使用上传后的图片URL
         author: {
           name: currentUser?.name || '匿名用户',
-          avatar: currentUser?.avatarUrl || '',
-          bio: currentUser?.bio || ''
+          avatar: currentUser?.avatarUrl || ''
         },
         publishedAt: new Date().getTime(),
         updatedAt: new Date().getTime()
@@ -470,6 +526,7 @@ export default function MarkdownEditor(props) {
             }
           }
         });
+        console.log('更新发布成功:', result);
       } else {
         // 创建新文章
         result = await $w.cloud.callDataSource({
@@ -479,25 +536,23 @@ export default function MarkdownEditor(props) {
             data: postData
           }
         });
+        console.log('创建发布成功:', result);
       }
       setPublishStatus('success');
       setPublishMessage('文章发布成功！');
       toast({
         title: '发布成功',
-        description: '文章已成功发布'
+        description: '文章已成功发布',
+        variant: 'default'
       });
 
-      // 跳转到文章页面
-      if (result && result.id) {
-        setTimeout(() => {
-          $w.utils.navigateTo({
-            pageId: 'blog',
-            params: {
-              id: result.id
-            }
-          });
-        }, 2000);
-      }
+      // 跳转到博客列表页面
+      setTimeout(() => {
+        $w.utils.navigateTo({
+          pageId: 'blog',
+          params: {}
+        });
+      }, 2000);
     } catch (error) {
       console.error('发布文章失败:', error);
       setPublishStatus('error');
@@ -631,6 +686,7 @@ export default function MarkdownEditor(props) {
                         </button>
                       </RippleEffect>}
                     <input ref={coverImageInputRef} type="file" accept="image/*" onChange={handleCoverImageSelect} className="hidden" />
+                    {isLoading && <div className="text-sm text-slate-400">图片上传中...</div>}
                   </div>
 
                   {/* 发布状态 */}

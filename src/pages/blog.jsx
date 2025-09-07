@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 // @ts-ignore;
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, useToast, Badge } from '@/components/ui';
 // @ts-ignore;
-import { Heart, MessageSquare, Eye, Calendar, Clock, Search, Filter, ArrowUpDown, BookOpen, TrendingUp, Star, X, Tag, Hash } from 'lucide-react';
+import { Heart, MessageSquare, Eye, Calendar, Clock, Search, Filter, ArrowUpDown, BookOpen, TrendingUp, Star, X, Tag, Hash, RefreshCw } from 'lucide-react';
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
@@ -38,6 +38,7 @@ export default function BlogListPage(props) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showTagFilter, setShowTagFilter] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState(null);
 
   // 加载博客列表
   const loadBlogs = async (pageNum = 1, append = false) => {
@@ -45,21 +46,37 @@ export default function BlogListPage(props) {
       setIsLoading(true);
       setLoadingStatus('loading');
       setLoadingMessage('正在加载博客文章...');
+
+      // 构建查询条件
+      const filterConditions = {
+        $and: [{
+          isPublished: {
+            $eq: true
+          }
+        }]
+      };
       const result = await $w.cloud.callDataSource({
         dataSourceName: 'blog_posts',
         methodName: 'wedaGetRecordsV2',
         params: {
           filter: {
-            where: {
-              $and: [{
-                isPublished: {
-                  $eq: true
-                }
-              }]
-            }
+            where: filterConditions
           },
           select: {
-            $master: true
+            $master: true,
+            title: true,
+            content: true,
+            excerpt: true,
+            category: true,
+            tags: true,
+            coverImage: true,
+            viewCount: true,
+            likes: true,
+            favoriteCount: true,
+            readTime: true,
+            createdAt: true,
+            updatedAt: true,
+            author: true
           },
           orderBy: [{
             createdAt: 'desc'
@@ -70,6 +87,7 @@ export default function BlogListPage(props) {
         }
       });
       if (result && result.records) {
+        console.log('加载博客成功:', result.records.length, '条记录');
         if (append) {
           setBlogs(prev => [...prev, ...result.records]);
         } else {
@@ -77,16 +95,17 @@ export default function BlogListPage(props) {
         }
         setFilteredBlogs(result.records);
         setHasMore(result.records.length === 12);
+        setLastRefreshTime(new Date());
 
-        // 提取分类和标签
-        const uniqueCategories = [...new Set(result.records.map(blog => blog.category).filter(Boolean))];
+        // 提取分类
+        const uniqueCategories = [...new Set(result.records.map(blog => blog.category).filter(category => category && category.trim() !== ''))];
         setCategories(uniqueCategories);
 
         // 提取所有标签
         const allTags = result.records.reduce((acc, blog) => {
           if (blog.tags && Array.isArray(blog.tags)) {
             blog.tags.forEach(tag => {
-              if (!acc.includes(tag)) {
+              if (tag && tag.trim() !== '' && !acc.includes(tag)) {
                 acc.push(tag);
               }
             });
@@ -95,10 +114,23 @@ export default function BlogListPage(props) {
         }, []);
         setAllTags(allTags);
         setLoadingStatus('success');
-        setLoadingMessage('博客加载完成');
+        setLoadingMessage(`加载完成，共 ${result.records.length} 篇文章`);
+        toast({
+          title: '加载成功',
+          description: `已加载 ${result.records.length} 篇博客文章`,
+          variant: 'default'
+        });
       } else {
-        setLoadingStatus('error');
-        setLoadingMessage('没有找到博客文章');
+        console.log('没有找到博客文章');
+        setLoadingStatus('empty');
+        setLoadingMessage('暂无博客文章');
+        setBlogs([]);
+        setFilteredBlogs([]);
+        toast({
+          title: '提示',
+          description: '目前还没有发布的博客文章',
+          variant: 'default'
+        });
       }
     } catch (error) {
       console.error('加载博客失败:', error);
@@ -106,7 +138,7 @@ export default function BlogListPage(props) {
       setLoadingMessage('加载失败，请刷新重试');
       toast({
         title: '加载失败',
-        description: '无法加载博客列表',
+        description: error.message || '无法加载博客列表',
         variant: 'destructive'
       });
     } finally {
@@ -114,13 +146,20 @@ export default function BlogListPage(props) {
     }
   };
 
+  // 刷新数据
+  const handleRefresh = () => {
+    setPage(1);
+    loadBlogs(1, false);
+  };
+
   // 过滤和搜索博客
   const filterBlogs = () => {
     let filtered = blogs;
 
     // 搜索过滤
-    if (searchQuery) {
-      filtered = filtered.filter(blog => blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || blog.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) || blog.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) || blog.category?.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(blog => blog.title && blog.title.toLowerCase().includes(query) || blog.excerpt && blog.excerpt.toLowerCase().includes(query) || blog.tags && blog.tags.some(tag => tag && tag.toLowerCase().includes(query)) || blog.category && blog.category.toLowerCase().includes(query) || blog.content && blog.content.toLowerCase().includes(query));
     }
 
     // 分类过滤
@@ -136,10 +175,10 @@ export default function BlogListPage(props) {
     // 排序
     switch (sortBy) {
       case 'newest':
-        filtered = [...filtered].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        filtered = [...filtered].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
         break;
       case 'oldest':
-        filtered = [...filtered].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        filtered = [...filtered].sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
         break;
       case 'mostViews':
         filtered = [...filtered].sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
@@ -176,6 +215,11 @@ export default function BlogListPage(props) {
     setSelectedTags([]);
   };
 
+  // 清除搜索
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   // 处理排序
   const handleSortChange = value => {
     setSortBy(value);
@@ -207,6 +251,12 @@ export default function BlogListPage(props) {
   useEffect(() => {
     filterBlogs();
   }, [searchQuery, selectedCategory, selectedTags, sortBy, blogs]);
+
+  // 格式化时间
+  const formatTime = date => {
+    if (!date) return '未知时间';
+    return new Date(date).toLocaleString('zh-CN');
+  };
   if (isLoading && blogs.length === 0) {
     return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center">
         <LoadingSpinner size="xl" text={loadingMessage} />
@@ -221,15 +271,30 @@ export default function BlogListPage(props) {
       
       <div className="container mx-auto px-4 py-8 pt-20">
         <div className="max-w-6xl mx-auto">
-          {/* 页面标题 */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-4">
-              技术博客
-            </h1>
-            <p className="text-slate-400 text-lg">
-              分享前端开发、React、TypeScript等技术文章
-            </p>
+          {/* 页面标题和刷新按钮 */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-4">
+                技术博客
+              </h1>
+              <p className="text-slate-400 text-lg">
+                分享前端开发、React、TypeScript等技术文章
+              </p>
+            </div>
+            <RippleEffect>
+              <Button onClick={handleRefresh} disabled={isLoading} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white" size="sm">
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                刷新
+              </Button>
+            </RippleEffect>
           </div>
+
+          {/* 最后刷新时间 */}
+          {lastRefreshTime && <div className="text-center mb-6">
+              <p className="text-slate-500 text-sm">
+                最后更新: {formatTime(lastRefreshTime)}
+              </p>
+            </div>}
 
           {/* 搜索和过滤区域 */}
           <Card className="bg-slate-800/40 backdrop-blur-md border-slate-700/50 mb-8">
@@ -239,7 +304,10 @@ export default function BlogListPage(props) {
                 <div className="md:col-span-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                    <Input placeholder="搜索文章标题、标签或分类..." value={searchQuery} onChange={handleSearch} className="pl-10 bg-slate-700/50 border-slate-600 text-white" />
+                    <Input placeholder="搜索文章标题、标签、分类或内容..." value={searchQuery} onChange={handleSearch} className="pl-10 pr-10 bg-slate-700/50 border-slate-600 text-white" />
+                    {searchQuery && <button onClick={handleClearSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300">
+                        <X className="h-4 w-4" />
+                      </button>}
                   </div>
                 </div>
 
@@ -283,6 +351,7 @@ export default function BlogListPage(props) {
                   <div className="flex items-center">
                     <Tag className="h-4 w-4 mr-2 text-slate-400" />
                     <span className="text-sm font-medium text-slate-300">标签筛选</span>
+                    <span className="text-slate-500 text-sm ml-2">({allTags.length} 个标签)</span>
                   </div>
                   {selectedTags.length > 0 && <RippleEffect>
                       <Button variant="ghost" size="sm" onClick={handleClearTags} className="text-slate-400 hover:text-slate-300 text-xs">
@@ -293,20 +362,20 @@ export default function BlogListPage(props) {
                 </div>
 
                 {/* 标签列表 */}
-                <div className="flex flex-wrap gap-2">
-                  {allTags.slice(0, showTagFilter ? allTags.length : 8).map(tag => <RippleEffect key={tag}>
-                      <Badge variant={selectedTags.includes(tag) ? "default" : "outline"} className={`cursor-pointer transition-all hover-lift click-scale ${selectedTags.includes(tag) ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50'}`} onClick={() => handleTagToggle(tag)}>
-                        <Hash className="h-3 w-3 mr-1" />
-                        {tag}
-                      </Badge>
-                    </RippleEffect>)}
-                  
-                  {allTags.length > 8 && <RippleEffect>
-                      <Badge variant="outline" className="cursor-pointer bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50" onClick={() => setShowTagFilter(!showTagFilter)}>
-                        {showTagFilter ? '收起' : `查看更多 (${allTags.length - 8})`}
-                      </Badge>
-                    </RippleEffect>}
-                </div>
+                {allTags.length > 0 ? <div className="flex flex-wrap gap-2">
+                    {allTags.slice(0, showTagFilter ? allTags.length : 8).map(tag => <RippleEffect key={tag}>
+                        <Badge variant={selectedTags.includes(tag) ? "default" : "outline"} className={`cursor-pointer transition-all hover-lift click-scale ${selectedTags.includes(tag) ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50'}`} onClick={() => handleTagToggle(tag)}>
+                          <Hash className="h-3 w-3 mr-1" />
+                          {tag}
+                        </Badge>
+                      </RippleEffect>)}
+                    
+                    {allTags.length > 8 && <RippleEffect>
+                        <Badge variant="outline" className="cursor-pointer bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50" onClick={() => setShowTagFilter(!showTagFilter)}>
+                          {showTagFilter ? '收起' : `查看更多 (${allTags.length - 8})`}
+                        </Badge>
+                      </RippleEffect>}
+                  </div> : <p className="text-slate-500 text-sm">暂无标签</p>}
 
                 {/* 已选标签提示 */}
                 {selectedTags.length > 0 && <div className="mt-3">
@@ -323,10 +392,26 @@ export default function BlogListPage(props) {
           </Card>
 
           {/* 博客列表 */}
-          {loadingStatus === 'error' ? <FormStatus status="error" message={loadingMessage} /> : filteredBlogs.length === 0 ? <div className="text-center py-16">
+          {loadingStatus === 'error' ? <FormStatus status="error" message={loadingMessage} action={<RippleEffect>
+                  <Button onClick={handleRefresh} variant="default">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    重试
+                  </Button>
+                </RippleEffect>} /> : filteredBlogs.length === 0 ? <div className="text-center py-16">
               <BookOpen className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-300 mb-2">没有找到文章</h3>
-              <p className="text-slate-400">尝试调整搜索条件或分类筛选</p>
+              <h3 className="text-xl font-semibold text-slate-300 mb-2">
+                {blogs.length === 0 ? '暂无博客文章' : '没有找到匹配的文章'}
+              </h3>
+              <p className="text-slate-400 mb-6">
+                {blogs.length === 0 ? '还没有发布的博客文章，去创建一篇吧！' : '尝试调整搜索条件或分类筛选'}
+              </p>
+              {blogs.length === 0 && <RippleEffect>
+                  <Button onClick={() => $w.utils.navigateTo({
+              pageId: 'editor'
+            })} variant="default">
+                    创建文章
+                  </Button>
+                </RippleEffect>}
             </div> : <>
               {/* 博客统计 */}
               <div className="flex items-center justify-between mb-6">
@@ -337,6 +422,9 @@ export default function BlogListPage(props) {
                     </span>}
                   {selectedTags.length > 0 && <span className="ml-2">
                       (标签: <span className="text-blue-300">{selectedTags.join(', ')}</span>)
+                    </span>}
+                  {searchQuery && <span className="ml-2">
+                      (搜索: <span className="text-blue-300">"{searchQuery}"</span>)
                     </span>}
                 </p>
                 <div className="flex items-center space-x-4 text-sm text-slate-400">
