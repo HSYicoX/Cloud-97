@@ -80,7 +80,6 @@ export default function BlogListPage(props) {
             coverImage: true,
             viewCount: true,
             likes: true,
-            favoriteCount: true,
             readTime: true,
             createdAt: true,
             updatedAt: true,
@@ -196,9 +195,6 @@ export default function BlogListPage(props) {
         break;
       case 'mostLikes':
         filtered = [...filtered].sort((a, b) => (b.likes || 0) - (a.likes || 0));
-        break;
-      case 'mostFavorites':
-        filtered = [...filtered].sort((a, b) => (b.favoriteCount || 0) - (a.favoriteCount || 0));
         break;
       default:
         break;

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 // @ts-ignore;
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Textarea, Tabs, TabsContent, TabsList, TabsTrigger, useToast, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Badge, Switch, Label } from '@/components/ui';
 // @ts-ignore;
-import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, Copy, Download, ArrowLeft, Tag, BookOpen, Send, FileText, X, Calendar, EyeOff, EyeIcon } from 'lucide-react';
+import { Save, Upload, Bold, Italic, Code, Link, Image, List, Quote, Eye, Edit, Copy, Download, ArrowLeft, Tag, BookOpen, Send, FileText, X, Calendar, EyeOff, EyeIcon, Clock } from 'lucide-react';
 
 // @ts-ignore;
 import { Navigation } from '@/components/Navigation';
@@ -34,6 +34,7 @@ export default function MarkdownEditor(props) {
   const [tagInput, setTagInput] = useState('');
   const [category, setCategory] = useState('');
   const [excerpt, setExcerpt] = useState('');
+  const [readTime, setReadTime] = useState('');
   const [status, setStatus] = useState('draft');
   const [isPublished, setIsPublished] = useState(false);
   const [coverImage, setCoverImage] = useState('');
@@ -49,13 +50,15 @@ export default function MarkdownEditor(props) {
     title: 'default',
     content: 'default',
     tags: 'default',
-    category: 'default'
+    category: 'default',
+    readTime: 'default'
   });
   const [inputMessages, setInputMessages] = useState({
     title: '',
     content: '',
     tags: '',
-    category: ''
+    category: '',
+    readTime: ''
   });
   const [saveStatus, setSaveStatus] = useState('default');
   const [publishStatus, setPublishStatus] = useState('default');
@@ -102,6 +105,7 @@ export default function MarkdownEditor(props) {
         setTags(result.tags || []);
         setCategory(result.category || '');
         setExcerpt(result.excerpt || '');
+        setReadTime(result.readTime || '');
         setStatus(result.status || 'draft');
         setIsPublished(result.isPublished || false);
         setCoverImage(result.coverImage || '');
@@ -231,6 +235,28 @@ export default function MarkdownEditor(props) {
           }));
           return true;
         }
+      case 'readTime':
+        if (value && !/^\d+\s*(分钟|min)$/i.test(value)) {
+          setInputStatus(prev => ({
+            ...prev,
+            readTime: 'warning'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            readTime: '建议格式: "5分钟" 或 "5 min"'
+          }));
+          return true;
+        } else {
+          setInputStatus(prev => ({
+            ...prev,
+            readTime: 'default'
+          }));
+          setInputMessages(prev => ({
+            ...prev,
+            readTime: ''
+          }));
+          return true;
+        }
       default:
         return true;
     }
@@ -278,6 +304,12 @@ export default function MarkdownEditor(props) {
   // 处理摘要变化
   const handleExcerptChange = e => {
     setExcerpt(e.target.value);
+  };
+
+  // 处理阅读时间变化
+  const handleReadTimeChange = e => {
+    setReadTime(e.target.value);
+    validateInput('readTime', e.target.value);
   };
 
   // 处理状态变化
@@ -372,6 +404,22 @@ export default function MarkdownEditor(props) {
     setUploadedCoverImageUrl('');
   };
 
+  // 计算阅读时间（基于内容字数估算）
+  const calculateReadTime = () => {
+    const wordCount = content.trim().split(/\s+/).length;
+    const readingSpeed = 200; // 每分钟阅读200字
+    const minutes = Math.ceil(wordCount / readingSpeed);
+    return `${minutes}分钟`;
+  };
+
+  // 自动计算阅读时间
+  useEffect(() => {
+    if (content.trim() && !readTime) {
+      const calculatedTime = calculateReadTime();
+      setReadTime(calculatedTime);
+    }
+  }, [content, readTime]);
+
   // 保存草稿
   const handleSaveDraft = async () => {
     // 验证必填字段
@@ -396,13 +444,14 @@ export default function MarkdownEditor(props) {
         tags: tags,
         category: category,
         excerpt: excerpt.trim(),
+        readTime: readTime || calculateReadTime(),
         status: 'draft',
         isPublished: false,
         isDraft: true,
         coverImage: uploadedCoverImageUrl,
         author: {
           name: currentUser?.name || '匿名用户',
-          avatarUrl: currentUser?.avatarUrl || ''
+          avatar: currentUser?.avatarUrl || '' // 修复：使用 avatar 而不是 avatarUrl
         },
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime()
@@ -495,13 +544,14 @@ export default function MarkdownEditor(props) {
         tags: tags,
         category: category,
         excerpt: excerpt.trim(),
+        readTime: readTime || calculateReadTime(),
         status: 'published',
         isPublished: true,
         isDraft: false,
         coverImage: uploadedCoverImageUrl,
         author: {
           name: currentUser?.name || '匿名用户',
-          avatarUrl: currentUser?.avatarUrl || ''
+          avatar: currentUser?.avatarUrl || '' // 修复：使用 avatar 而不是 avatarUrl
         },
         publishedAt: new Date().getTime(),
         updatedAt: new Date().getTime()
@@ -637,6 +687,23 @@ export default function MarkdownEditor(props) {
                       </SelectContent>
                     </Select>
                     <InputFeedback status={inputStatus.category} message={inputMessages.category} />
+                  </div>
+
+                  {/* 阅读时间 */}
+                  <div className="space-y-2">
+                    <Label htmlFor="readTime" className="text-slate-300">
+                      阅读时间
+                    </Label>
+                    <div className="flex space-x-2">
+                      <Input id="readTime" value={readTime} onChange={handleReadTimeChange} placeholder="例如: 5分钟" className={`bg-slate-700/50 border-slate-600 text-white ${inputStatus.readTime === 'warning' ? 'input-warning' : ''}`} />
+                      <RippleEffect>
+                        <Button onClick={() => setReadTime(calculateReadTime())} variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white" size="sm">
+                          <Clock className="h-4 w-4 mr-1" />
+                          自动计算
+                        </Button>
+                      </RippleEffect>
+                    </div>
+                    <InputFeedback status={inputStatus.readTime} message={inputMessages.readTime} />
                   </div>
 
                   {/* 标签 */}

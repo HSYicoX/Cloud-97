@@ -27,7 +27,6 @@ export default function BlogDetailPage(props) {
   const [newComment, setNewComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [favoriteCount, setFavoriteCount] = useState(0);
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -69,7 +68,6 @@ export default function BlogDetailPage(props) {
       if (blogResult) {
         setBlog(blogResult);
         setIsFavorite(blogResult.isFavorite || false);
-        setFavoriteCount(blogResult.favoriteCount || 0);
         setViewCount(blogResult.viewCount || 0);
         setLikeCount(blogResult.likes || 0);
 
@@ -163,14 +161,12 @@ export default function BlogDetailPage(props) {
     try {
       setIsFavoriting(true);
       const newFavoriteState = !isFavorite;
-      const newFavoriteCount = newFavoriteState ? favoriteCount + 1 : favoriteCount - 1;
       await $w.cloud.callDataSource({
         dataSourceName: 'blog_posts',
         methodName: 'wedaUpdateV2',
         params: {
           data: {
-            isFavorite: newFavoriteState,
-            favoriteCount: newFavoriteCount
+            isFavorite: newFavoriteState
           },
           filter: {
             where: {
@@ -184,7 +180,6 @@ export default function BlogDetailPage(props) {
         }
       });
       setIsFavorite(newFavoriteState);
-      setFavoriteCount(newFavoriteCount);
       toast({
         title: newFavoriteState ? '已收藏' : '已取消收藏',
         description: newFavoriteState ? '文章已添加到收藏' : '文章已从收藏中移除'
@@ -305,7 +300,7 @@ export default function BlogDetailPage(props) {
               </div>
               <div className="flex items-center text-slate-400">
                 <Star className={`h-4 w-4 mr-1 ${isFavorite ? 'fill-current text-yellow-400' : ''}`} />
-                {favoriteCount} 收藏
+                {isFavorite ? '已收藏' : '收藏'}
               </div>
             </div>
 
@@ -361,7 +356,7 @@ export default function BlogDetailPage(props) {
               {comments.map(comment => <div key={comment.id} className="p-4 bg-slate-700/30 rounded-lg">
                   <div className="flex items-start mb-3">
                     <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={comment.user?.avatarUrl} alt={comment.user?.name} />
+                      <AvatarImage src={comment.user?.avatar} alt={comment.user?.name} />
                       <AvatarFallback>{comment.user?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
