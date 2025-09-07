@@ -3,15 +3,15 @@
   {
     "_id": "1",
     "title": "React 18新特性深度解析",
-    "content": "# React 18新特性深度解析\n\nReact 18带来了许多令人兴奋的新特性，本文将深入探讨这些变化。\n\n## 并发渲染（极Concurrent Rendering）\n\nReact 18最大的变化是引入了并发渲染机制。这意味着React可以在渲染过程中中断和恢复工作，从而提供更流畅的用户体验。\n\n```javascript\nimport { create极Root } from 'react-dom/client';\n\n// 新的渲染API\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);\n```\n\n## 自动批处理（Automatic Batching）\n\nReact 18改进了批处理机制，现在可以在更多场景下自动批处理状态更新：\n\n```javascript\nfunction MyComponent() {\n  const [count, setCount] = useState(0);\n  const [name, setName] = useState('');\n\n  const handleClick = () => {\n    setCount(c => c + 1);\n    setName('Updated'); // 这两个更新会被自动批处理\n极  };\n\n  return <button onClick={handleClick}>Click me</button>;\n}\n```\n\n## 新的Hooks\n\nReact 18引入了几个新的Hooks：\n\n- `useId` - 生成唯一的ID\n- `useTransition` - 管理过渡状态\n- `useDeferredValue` - 延迟更新值\n\n```javascript\nimport { useTransition } from 'react';\n\nfunction SearchBox() {\n  const [isPending, startTransition] = useTransition();\n  const [query, setQuery极] = useState('');\n\n  const handleSearch = (value) => {\n    startTransition(() => {\n      setQuery(value);\n    });\n  };\n\n  return (\n    <div>\n      <input onChange={(e) => handleSearch(e.target.value)} />\n      {isPending && <span>Loading...</span>}\n    </div>\n  );\n}\n```\n\n## 服务端渲染改进\n\nReact 18对SSR进行了重大改进，支持流式渲染和选择性水合。\n\n## 总结\n\nReact 18的并发特性为构建更响应式的应用程序提供了强大的基础。这些改进使得React能够更好地处理复杂的用户交互和大型应用程序。",
+    "content": "# React 18新特性深度解析\n\nReact 18带来了许多令人兴奋的新特性，本文将深入探讨这些变化。\n\n## 并发渲染（Concurrent Rendering）\n\nReact 18最大的变化是引入了并发渲染机制。这意味着React可以在渲染过程中中断和恢复工作，从而提供更流畅的用户体验。\n\n```javascript\nimport { createRoot } from 'react-dom/client';\n\n// 新的渲染API\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);\n```\n\n## 自动批处理（Automatic Batching）\n\nReact 18改进了批处理机制，现在可以在更多场景下自动批处理状态更新：\n\n```javascript\nfunction MyComponent() {\n  const [count, setCount] = useState(0);\n  const [name, setName] = useState('');\n\n  const handleClick = () => {\n    setCount(c => c + 1);\n    setName('Updated'); // 这两个更新会被自动批处理\n  };\n\n  return <button onClick极={handleClick}>Click me</button>;\n}\n```\n\n## 新的Hooks\n\nReact 18引入了几个新的Hooks：\n\n- `useId` - 生成唯一的ID\n- `useTransition` - 管理过渡状态\n- `useDeferredValue` - 延迟更新值\n\n```javascript\nimport { useTransition } from 'react';\n\nfunction SearchBox() {\n  const [isPending, startTransition] = useTransition();\n  const [query, setQuery] = useState('');\n\n  const handleSearch = (value) => {\n    startTransition(() => {\n      setQuery(value);\n    });\n  };\n\n  return (\n    <div>\n      <input onChange={(e) => handleSearch(e.target.value)} />\n      {isPending && <span>Loading...</span>}\n    </div>\n  );\n}\n```\n\n## 服务端渲染改进\n\nReact 18对SSR进行了重大改进，支持流式渲染和选择性水合。\n\n## 总结\n\nReact 18的并发特性为构建更响应式的应用程序提供了强大的基础。这些改进使得React能够更好地处理复杂的用户交互和大型应用程序。",
     "author": {
       "name": "Haokir",
-      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+      "avatarUrl": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
       "bio": "前端开发工程师，React爱好者"
     },
-    "createdAt": "2024-01-15",
-    "updatedAt": "2024-01-15",
-    "publishedAt": "2024-01-15",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000,
+    "publishedAt": 1736870400000,
     "readTime": "8 min read",
     "likes": 42,
     "tags": ["React", "前端开发", "JavaScript"],
@@ -23,25 +23,23 @@
     "favoriteCount": 42,
     "viewCount": 128,
     "slug": "react-18-new-features",
-    "coverImage": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
+    "coverImage": "https极://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
     "excerpt": "React 18带来了并发渲染、自动批处理等令人兴奋的新特性，本文将深入探讨这些变化。",
     "metaDescription": "深度解析React 18的新特性，包括并发渲染、自动批处理、新的Hooks和服务端渲染改进。",
-    "metaKeywords": ["React", "React 18", "前端开发", "JavaScript", "并发渲染"],
-    "createdAt": 1736870400000,
-    "updatedAt": 1736870400000
+    "metaKeywords": ["React", "React 18", "前端开发", "JavaScript", "并发渲染"]
   },
   {
     "_id": "2",
     "title": "TypeScript高级类型技巧",
-    "content": "掌握TypeScript的条件类型、映射类型和模板字面量类型的高级用法",
+    "content": "# TypeScript高级类型技巧\n\n掌握TypeScript的条件类型、映射类型和模板字面量类型的高级用法，提升代码质量和开发效率。\n\n## 条件类型（Conditional Types）\n\n条件类型允许我们根据极类型关系选择不同的类型：\n\n```typescript\ntype IsString<T> = T extends string ? true : false;\n\ntype Result1 = IsString<string>; // true\ntype Result2 = IsString<number>; // false\n```\n\n## 映射类型（Mapped Types）\n\n映射类型可以基于现有类型创建新类型：\n\n```typescript\ntype Readonly<T> = {\n  readonly [P in keyof T]: T[极P];\n};\n\ninterface User {\n  name: string;\n  age: number;\n}\n\ntype ReadonlyUser = Readonly<User>;\n// { readonly name: string; readonly age: number; }\n```\n\n## 模板字面量类型（Template Literal Types）\n\n模板字面量类型允许我们基于字符串字面量创建新类型：\n\n```typescript\ntype EventName = 'click' | 'scroll' | 'mousemove';\ntype EventHandler = `on${EventName}`;\n// 'onclick' | 'onscroll' | 'onmousemove'\n```\n\n## 实用工具类型\n\nTypeScript提供了许多内置的实用工具类型：\n\n- `Partial<T>` - 所有属性变为可选\n- `Required<T>` - 所有属性变为必选\n- `Pick<T, K>` - 选择特定属性\n- `Omit<T, K>` - 排除特定属性\n\n## 总结\n\n掌握这些高级类型技巧可以显著提升TypeScript开发效率和代码质量。",
     "author": {
       "name": "TypeScript专家",
-      "avatar": "https极://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
+      "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
       "bio": "TypeScript技术专家"
     },
-    "createdAt": "2024-01-10",
-    "updatedAt": "2024-01-10",
-    "publishedAt": "2024-01-10",
+    "createdAt": 1736467200000,
+    "updatedAt": 1736467200000,
+    "publishedAt": 1736467200000,
     "readTime": "12 min read",
     "likes": 28,
     "tags": ["TypeScript", "前端开发"],
@@ -50,30 +48,28 @@
     "isPublished": true,
     "isDraft": false,
     "isFavorite": false,
-    "favoriteCount": 15,
+    "favorite极Count": 15,
     "viewCount": 89,
     "slug": "typescript-advanced-types",
     "coverImage": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=400&fit=crop",
     "excerpt": "学习TypeScript高级类型技巧，提升代码质量和开发效率。",
     "metaDescription": "掌握TypeScript的条件类型、映射类型和模板字面量类型的高级用法，提升开发技能。",
-    "metaKeywords": ["TypeScript", "类型系统", "前端开发", "JavaScript"],
-    "createdAt": 1736467200000,
-    "updatedAt": 1736467200000
+    "metaKeywords": ["TypeScript", "类型系统", "前端开发", "JavaScript"]
   },
   {
     "_id": "3",
     "title": "现代CSS布局实战",
-    "content": "使用Grid和Flexbox构建响应式布局的最佳实践和技巧",
+    "content": "# 现代CSS布局实战\n\n使用Grid和Flexbox构建响应式布局的最佳实践和技巧。\n\n## CSS Grid布局\n\nGrid布局提供了强大的二维布局能力：\n\n```css\n.container {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  grid-gap: 20px;\n}\n\n.item {\n  grid-column: span 1;\n}\n\n@media (max-width: 768px) {\n  .container {\n    grid-template-columns: 1fr;\n  }\n}\n```\n\n## Flexbox布局\n\nFlexbox非常适合一维布局和对齐：\n\n```css\n.container {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  flex-wrap: wrap;\n}\n\n.item {\n  flex: 1;\n  min-width: 200px;\n}\n```\n\n## 响应式设计技巧\n\n1. **移动优先**：先设计移动端布局\n2. **相对单位极**：使用rem、em、%等相对单位\n3. **媒体查询**：针对不同屏幕尺寸调整布局\n极4. **弹性图片**：使用max-width: 100%确保图片自适应\n\n## 实用工具类\n\n创建实用的CSS工具类：\n\n```css\n.flex { display: flex; }\n.flex-col { flex-direction: column; }\n.justify-center { justify-content: center; }\n.items-center { align-items: center; }\n.grid { display: grid; }\n.gap-4 { gap: 1rem; }\n```\n\n## 性能优化\n\n- 减少重排和重绘\n- 使用will-change属性\n- 避免过度嵌套\n- 使用CSS变量\n\n## 总结\n\n掌握现代CSS布局技术可以创建出既美观又响应式的网页设计。",
     "author": {
       "name": "CSS大师",
-      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
+      "avatarUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
       "bio": "CSS布局专家"
     },
-    "createdAt": "2024-01-05",
-    "updatedAt": "2024-01-05",
-    "publishedAt": "2024-01-05",
+    "createdAt": 1736035200000,
+    "updatedAt": 1736035200000,
+    "publishedAt": 1736035200000,
     "readTime": "6 min read",
-    "likes极": 35,
+    "likes": 35,
     "tags": ["CSS", "布局", "响应式设计"],
     "category": "前端开发",
     "status": "published",
@@ -86,22 +82,20 @@
     "coverImage": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=400&fit=crop",
     "excerpt": "掌握现代CSS布局技术，使用Grid和Flexbox构建优秀的响应式布局。",
     "metaDescription": "学习使用Grid和Flexbox构建响应式布局的最佳实践和技巧，提升前端开发能力。",
-    "metaKeywords": ["CSS", "Grid", "Flexbox", "响应式设计", "前端开发"],
-    "createdAt": 1736035200000,
-    "updatedAt": 1736035200000
+    "metaKeywords": ["CSS", "Grid", "Flexbox", "响应式设计", "前端开发"]
   },
   {
     "_id": "4",
     "title": "Vue 3组合式API深入解析",
-    "content": "深入学习Vue 3的组合式API和响应式系统的核心原理",
+    "content": "# Vue 3组合式API深入解析\n\n深入学习Vue 3的组合式API和响应式系统的核心原理。极\n\n## 组合式API vs 选项式API\n\n组合式API提供了更好的代码组织和复用：\n\n```javascript\n// 选项式API\nconst app = {\n  data() {\n    return {\n      count: 0\n    }\n  },\n  methods: {\n    increment() {\n      this.count++\n    }\n  }\n}\n\n// 组合式API\nimport { ref } from 'vue'\n\nconst useCounter = () => {\n  const count = ref(0)\n  const increment = () => count.value++\n  \n  return {\n    count,\n    increment\n  }\n}\n```\n\n## 响应式系统\n\nVue 3使用Proxy实现响应式：\n\n```javascript\nimport { reactive, watchEffect } from 'vue'\n\nconst state = reactive({\n  count: 0,\n  message: 'Hello'\n})\n\nwatchEffect(() => {\n  console.log(`Count: ${state.count}`)\n})\n```\n\n## 生命周期钩子\n\n组合式API中的生命周期：\n\n```javascript\nimport { onMounted, onUnmounted } from 'vue'\n\nconst useMouse = () => {\n  const x = ref(0)\n  const y = ref(0)\n  \n  const update = (极e) => {\n    x.value = e.pageX\n    y.value = e.pageY\n  }\n  \n  onMounted(() => {\n    window.addEventListener('mousemove', update)\n  })\n  \n  onUnmounted(() => {\n    window.removeEventListener('mousemove', update极)\n  })\n  \n  return { x, y }\n}\n```\n\n## 自定义Hooks\n\n创建可复用的自定义Hooks：\n\n```javascript\n// useLocalStorage.js\nimport { ref, watch } from 'vue'\n\nexport function useLocalStorage(key, defaultValue) {\n  const data = ref(JSON.parse(localStorage.getItem(key)) || defaultValue)\n  \n  watch(data, (newValue) => {\n    localStorage.setItem(key, JSON.stringify(newValue))\n  })\n  \n  return data\n}\n```\n\n## 总结\n\n组合式API为Vue开发带来了更大的灵活性和代码组织能力。",
     "author": {
       "name": "Vue开发者",
-      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
+      "avatarUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
       "bio": "Vue.js技术专家"
     },
-    "createdAt": "2024-01-02",
-    "updatedAt": "2024-01-02",
-    "publishedAt": "2024-01-02",
+    "createdAt": 1735776000000,
+    "updatedAt": 1735776000000,
+    "publishedAt": 1735776000000,
     "readTime": "10 min read",
     "likes": 31,
     "tags": ["Vue", "前端框架", "JavaScript"],
@@ -116,21 +110,19 @@
     "coverImage": "https://images.unsplash.com/photo-1566837945700-30057527ade0?w=800&h=400&fit=crop",
     "excerpt": "深入理解Vue 3的组合式API和响应式系统，提升Vue开发技能。",
     "metaDescription": "深入学习Vue 3的组合式API和响应式系统的核心原理，掌握现代Vue开发技术。",
-    "metaKeywords": ["Vue", "Vue 3", "组合式API", "响应式系统", "前端框架"],
-    "createdAt": 1735776000000,
-    "updatedAt": 173577极6000000
+    "metaKeywords": ["Vue", "Vue 3", "组合式API", "响应式系统", "前端框架"]
   },
   {
     "_id": "5",
     "title": "Node.js性能优化指南",
-    "content": "探索Node.js性能优化的各种技术和最佳实践",
+    "content": "# Node.js性能优化指南\n\n探索Node.js性能优化的各种技术和最佳实践。\n\n## 内存管理\n\n避免内存泄漏和优化内存使用：\n\n```javascript\n// 使用stream处理大文件\nconst fs = require('fs');\nconst readStream = fs.createReadStream('large-file.txt');\nconst writeStream = fs.createWriteStream('output.txt');\n\nreadStream.pipe(writeStream);\n```\n\n## 事件循环优化\n\n理解Node.js事件循环机制：\n\n```javascript\n// 使用setImmediate和process.nextTick\nfunction heavyComputation() {\n  // 计算密集型任务\n}\n\n// 在事件循环的不同阶段执行\nsetImmediate(() => {\n  heavyComputation();\n});\n```\n\n## 集群模式\n\n使用集群充分利用多核CPU：\n\n```javascript\nconst cluster = require('cluster');\nconst os = require('os');\n\nif (cluster.isMaster) {\n  const numCPUs = os.cpus().length;\n  \n  for (let i = 0; i < numCPUs; i++) {\n    cluster.fork();\n  }\n} else {\n  // Worker进程代码\n  require('./app');\n}\n```\n\n## 缓存策略\n\n实施有效的缓存策略：\n\n```javascript\nconst cache = new Map();\n\nfunction getCachedData(key) {\n  if (cache.has(key)) {\n    return cache.get(key);\n  }\n  \极n  const data = fetchData(key);\n  cache.set(key, data);\n  \n  // 设置过期时间\n  setTimeout(() => {\n    cache.delete(key);\n  }, 60000);\n  \n  return data;\n}\n```\n\n## 监控和诊断\n\n使用工具监控应用性能：\n\n- **clinic.js** - 性能诊断工具\n- **0x** - 火焰图生成\n- **node --inspect** - Chrome DevTools调试\n\n## 总结\n\n通过合理的优化策略，可以显著提升Node.js应用的性能和稳定性。",
     "author": {
       "name": "Haokir",
-      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+      "avatarUrl": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
       "bio": "前端开发工程师，React爱好者"
     },
-    "createdAt": "2024-01-20",
-    "updatedAt": "2024-01-20",
+    "createdAt": 1737331200000,
+    "updatedAt": 1737331200000,
     "readTime": "15 min read",
     "likes": 0,
     "tags": ["Node.js", "性能优化", "后端开发"],
@@ -145,9 +137,7 @@
     "coverImage": "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=400&fit=crop",
     "excerpt": "学习Node.js性能优化的各种技术和最佳实践，提升应用性能。",
     "metaDescription": "探索Node.js性能优化的各种技术和最佳实践，包括内存管理、事件循环优化等。",
-    "metaKeywords": ["Node.js", "性能优化", "后端开发", "JavaScript"],
-    "createdAt": 1737331200000,
-    "updatedAt": 1737331200000
+    "metaKeywords": ["Node.js", "性能优化", "后端开发", "JavaScript"]
   }
 ]
   
