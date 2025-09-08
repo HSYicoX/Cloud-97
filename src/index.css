@@ -63,7 +63,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 212.极7 26.8% 83.9%;
   }
 }
 
@@ -76,17 +76,17 @@
   }
 }
 
-/* 自定义鼠标效果样式 */
+/* 自定义鼠标样式 */
 .cursor-dot {
   position: fixed;
   width: 8px;
   height: 8px;
-  background: #3b82f6;
   border-radius: 50%;
+  background: #3b82f6;
   pointer-events: none;
   z-index: 9999;
-  transition: all 0.1s ease-out;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  transition: transform 0.15s ease, background-color 0.2s ease;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
 }
 
 .cursor-outline {
@@ -97,85 +97,12 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
-  transition: all 0.2s ease-out;
-  backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  backdrop-filter: blur(2px);
 }
 
-.particle {
-  position: fixed;
-  background: linear-gradient(45deg, #3b82f6, #60a5fa);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9997;
-  opacity: 0;
-}
-
-/* 悬停效果增强 */
-.hover-effect {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.hover-effect::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #3b82f6, #60a5fa, #ec4899);
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.hover-effect:hover::before {
-  opacity: 0.8;
-}
-
-/* 按钮悬停波纹效果 */
-.btn-ripple {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-ripple::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.btn-ripple:hover::after {
-  width: 300px;
-  height: 300px;
-}
-
-/* 卡片悬停效果 */
-.card-hover {
-  transition: all 0.3s ease;
-  transform-style: preserve-3d;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* 文字渐变效果 */
-.text-gradient {
-  background: linear-gradient(45deg, #3b82f6, #60a5fa, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* 背景粒子效果 */
-.bg-particles {
+/* 粒子动画 */
+.particles-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -183,39 +110,145 @@
   height: 100%;
   pointer-events: none;
   z-index: -1;
+  overflow: hidden;
 }
 
-.particle-bg {
+.particle {
   position: absolute;
-  background: rgba(59, 130, 246, 0.1);
   border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
+  opacity: 0.6;
+  filter: blur(1px);
+  animation: float 8s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
   }
   50% {
     transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
   }
 }
 
+@keyframes particleFloat {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(
+      calc(var(--tx) * 1px), 
+      calc(var(--ty) * 1px)
+    ) scale(0.2);
+  }
+}
+
+/* 按钮悬停效果 */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片悬停效果 */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
 /* 输入框聚焦效果 */
+.input-focus {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
 .input-focus:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 渐变文字效果 */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 霓虹灯效果 */
+.neon-text {
+  color: #fff;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6;
+  animation: neon 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes neon {
+  from {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #0073e6, 0 0 30px #0073e6;
+  }
+}
+
+/* 波纹效果 */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.8);
 }
 
 /* 页面切换动画 */
 .page-transition {
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-@keyframes fadeInUp {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -237,21 +270,20 @@
   }
 }
 
-/* 滚动条美化 */
-::-webkit-scrollbar {
-  width: 8px;
+/* 打字机效果 */
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid #3b82f6;
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #3b82f6, #60a5fa);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #2563eb, #3b82f6);
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #3b82f6 }
 }
