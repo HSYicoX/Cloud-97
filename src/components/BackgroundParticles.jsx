@@ -7,32 +7,30 @@ export function BackgroundParticles() {
     // 创建背景粒子
     const createParticles = () => {
       const newParticles = [];
-      const particleCount = Math.floor(window.innerWidth * window.innerHeight / 20000); // 根据屏幕大小调整粒子数量
+      const count = Math.floor(window.innerWidth / 20); // 根据屏幕宽度调整粒子数量
 
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < count; i++) {
         newParticles.push({
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
           size: Math.random() * 3 + 1,
-          duration: Math.random() * 8 + 4,
+          duration: Math.random() * 10 + 5,
           delay: Math.random() * 5,
-          color: `hsl(${Math.random() * 60 + 200}, 70%, 60%)` // 蓝色到紫色范围
+          color: `hsl(${Math.random() * 360}, 70%, 60%)`
         });
       }
       setParticles(newParticles);
     };
     createParticles();
-
-    // 响应窗口大小变化
     const handleResize = () => {
       createParticles();
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  return <div className="particles-container">
-      {particles.map(particle => <div key={particle.id} className="particle" style={{
+  return <div className="bg-particles">
+      {particles.map(particle => <div key={particle.id} className="particle-bg" style={{
       left: `${particle.x}%`,
       top: `${particle.y}%`,
       width: `${particle.size}px`,

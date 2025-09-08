@@ -76,17 +76,17 @@
   }
 }
 
-/* 自定义鼠标样式 */
+/* 自定义鼠标效果样式 */
 .cursor-dot {
   position: fixed;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
   background: #3b82f6;
+  border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  mix-blend-mode: difference;
-  transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  transition: all 0.1s ease-out;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
 }
 
 .cursor-outline {
@@ -97,88 +97,85 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
-  mix-blend-mode: difference;
-  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  transition: all 0.2s ease-out;
+  backdrop-filter: blur(4px);
 }
 
-/* 按钮悬停特效 */
-.btn-hover-effect {
+.particle {
+  position: fixed;
+  background: linear-gradient(45deg, #3b82f6, #60a5fa);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+}
+
+/* 悬停效果增强 */
+.hover-effect {
   position: relative;
-  overflow: hidden;
   transition: all 0.3s ease;
 }
 
-.btn-hover-effect::before {
+.hover-effect::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  inset: -2px;
+  background: linear-gradient(45deg, #3b82f6, #60a5fa, #ec4899);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
 }
 
-.btn-hover-effect:hover::before {
-  left: 100%;
+.hover-effect:hover::before {
+  opacity: 0.8;
 }
 
-/* 卡片悬停动画 */
+/* 按钮悬停波纹效果 */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* 卡片悬停效果 */
 .card-hover {
   transition: all 0.3s ease;
-  transform: translateY(0);
+  transform-style: preserve-3d;
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 /* 文字渐变效果 */
 .text-gradient {
-  background: linear-gradient(135deg, #60a5fa, #ec4899);
+  background: linear-gradient(45deg, #3b82f6, #60a5fa, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* 边框流光效果 */
-.border-glow {
-  position: relative;
-  border: 1px solid transparent;
-  background: linear-gradient(45deg, #1e293b, #0f172a) padding-box,
-              linear-gradient(45deg, #60a5fa, #ec4899) border-box;
-}
-
-.border-glow::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #60a5fa, #ec4899, #60a5fa);
-  background-size: 200% 200%;
-  animation: borderGlow 3s ease infinite;
-  border-radius: inherit;
-  z-index: -1;
-  opacity: 0.5;
-}
-
-@keyframes borderGlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 /* 背景粒子效果 */
-.particles-container {
+.bg-particles {
   position: fixed;
   top: 0;
   left: 0;
@@ -188,64 +185,42 @@
   z-index: -1;
 }
 
-.particle {
+.particle-bg {
   position: absolute;
-  background: linear-gradient(45deg, #60a5fa, #ec4899);
+  background: rgba(59, 130, 246, 0.1);
   border-radius: 50%;
-  opacity: 0.3;
   animation: float 6s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.3;
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
     transform: translateY(-20px) rotate(180deg);
-    opacity: 0.6;
   }
 }
 
 /* 输入框聚焦效果 */
-.input-focus-effect:focus {
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-  border-color: #60a5fa;
-  transform: translateY(-1px);
+.input-focus:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
 }
 
-/* 页面过渡动画 */
+/* 页面切换动画 */
 .page-transition {
-  animation: pageFadeIn 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-@keyframes pageFadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* 滚动条美化 */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #60a5fa, #ec4899);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #3b82f6, #db2777);
 }
 
 /* 加载动画 */
@@ -262,42 +237,21 @@
   }
 }
 
-/* 霓虹文字效果 */
-.neon-text {
-  text-shadow: 0 0 5px #60a5fa, 0 0 10px #60a5fa, 0 0 15px #60a5fa;
-  animation: neonPulse 2s ease-in-out infinite alternate;
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-@keyframes neonPulse {
-  from {
-    text-shadow: 0 0 5px #60a5fa, 0 0 10px #60a5fa, 0 0 15px #60a5fa;
-  }
-  to {
-    text-shadow: 0 0 10px #60a5fa, 0 0 20px #60a5fa, 0 0 30px #60a5fa;
-  }
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
 
-/* 3D 卡片效果 */
-.card-3d {
-  transform-style: preserve-3d;
-  transition: transform 0.3s ease;
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #3b82f6, #60a5fa);
+  border-radius: 4px;
 }
 
-.card-3d:hover {
-  transform: rotate3d(1, 1, 0, 5deg);
-}
-
-/* 玻璃拟态效果 */
-.glass-morphism {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* 响应式设计辅助 */
-@media (max-width: 768px) {
-  .cursor-dot,
-  .cursor-outline {
-    display: none;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #2563eb, #3b82f6);
 }
