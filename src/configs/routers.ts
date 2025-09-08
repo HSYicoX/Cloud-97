@@ -5,6 +5,7 @@ import BLOG from '../pages/blog.jsx';
 import PROFILE from '../pages/profile.jsx';
 import REGISTER from '../pages/register.jsx';
 import BLOG_DETAIL from '../pages/blog-detail.jsx';
+import LOGIN from '../pages/login.jsx';
 export const routers = [{
   id: "index",
   component: INDEX
@@ -26,4 +27,7 @@ export const routers = [{
 }, {
   id: "blog-detail",
   component: BLOG_DETAIL
+}, {
+  id: "login",
+  component: LOGIN
 }]

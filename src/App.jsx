@@ -1,7 +1,7 @@
 // @ts-ignore;
 import React, { useState, useEffect } from 'react';
 // @ts-ignore;
-import { Toaster } from '@/components/ui';
+import { ToastProvider } from '@/components/ui';
 
 // 导入页面组件
 // @ts-ignore;
@@ -18,6 +18,8 @@ import RepositoryPage from './pages/repository.jsx';
 import ProfilePage from './pages/profile.jsx';
 // @ts-ignore;
 import RegisterPage from './pages/register.jsx';
+// @ts-ignore;
+import LoginPage from './pages/login.jsx';
 
 // 导入样式
 import './index.css';
@@ -138,13 +140,16 @@ function App() {
         return <ProfilePage {...pageProps} />;
       case 'register':
         return <RegisterPage {...pageProps} />;
+      case 'login':
+        return <LoginPage {...pageProps} />;
       default:
         return <HomePage {...pageProps} />;
     }
   };
-  return <div className="App">
-      {renderPage()}
-      <Toaster />
-    </div>;
+  return <ToastProvider>
+      <div className="App">
+        {renderPage()}
+      </div>
+    </ToastProvider>;
 }
 export default App;
