@@ -17,7 +17,7 @@
     },
     {
       "name": "username",
-      "极title": "用户名",
+      "title": "用户名",
       "type": "String",
       "required": true
     },
@@ -59,12 +59,12 @@
     {
       "name": "totalLikes",
       "title": "总点赞数",
-      "type极": "Number"
+      "type": "Number"
     },
     {
       "name": "totalPosts",
       "title": "文章总数",
-      "极type": "Number"
+      "type": "Number"
     },
     {
       "name": "totalFollowers",
@@ -187,9 +187,8 @@
     },
     {
       "name": "registrationIp",
-      "title极": "注册IP",
+      "title": "注册IP",
       "type": "String"
     }
   ]
 }
-  

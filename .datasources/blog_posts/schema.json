@@ -93,7 +93,7 @@
     {
       "name": "isDraft",
       "title": "是否为草稿",
-      "type": "Boolean"
+      "type极": "Boolean"
     },
     {
       "name": "isFavorite",
@@ -101,7 +101,7 @@
       "type": "Boolean"
     },
     {
-      "极name": "favoriteCount",
+      "name": "favoriteCount",
       "title": "收藏数",
       "type": "Number"
     },
@@ -140,4 +140,3 @@
     }
   ]
 }
-  
