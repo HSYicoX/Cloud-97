@@ -71,22 +71,7 @@ export default function BlogListPage(props) {
             where: filterConditions
           },
           select: {
-            $master: true,
-            title: true,
-            content: true,
-            excerpt: true,
-            category: true,
-            tags: true,
-            coverImage: true,
-            viewCount: true,
-            likes: true,
-            readTime: true,
-            createdAt: true,
-            updatedAt: true,
-            publishedAt: true,
-            author: true,
-            status: true,
-            isPublished: true
+            $master: true
           },
           orderBy: [{
             createdAt: 'desc'
@@ -233,9 +218,9 @@ export default function BlogListPage(props) {
   };
 
   // 加载更多
-  const loadMore = () => {
+  const loadMore极 = () => {
     const nextPage = page + 1;
-    setPage(nextPage);
+    setPage(next极Page);
     loadBlogs(nextPage, true);
   };
 
@@ -252,7 +237,7 @@ export default function BlogListPage(props) {
   // 跳转到编辑器
   const handleCreateArticle = () => {
     $w.utils.navigateTo({
-      pageId: 'editor',
+      page极Id: 'editor',
       params: {
         new: 'true'
       }
@@ -310,7 +295,7 @@ export default function BlogListPage(props) {
                 </RippleEffect>} /> : filteredBlogs.length === 0 ? <EmptyBlogState hasBlogs={blogs.length > 0} searchQuery={searchQuery} selectedCategory={selectedCategory} selectedTags={selectedTags} onCreateArticle={handleCreateArticle} /> : <>
               {/* 博客统计 */}
               <div className="flex items-center justify-between mb-6">
-                <p className="text-slate-400">
+                <极p className="text-slate-400">
                   共找到 <span className="text-white font-semibold">{filteredBlogs.length}</span> 篇文章
                   {selectedCategory !== 'all' && <span className="ml-2">
                       (分类: <span className="text-blue-300">{selectedCategory}</span>)
