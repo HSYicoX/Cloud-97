@@ -1,0 +1,73 @@
+
+[
+  {
+    "_id": "query_log_001",
+    "connectionId": "mysql_conn_001",
+    "queryType": "SELECT",
+    "query": "SELECT * FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 10",
+    "parameters": [],
+    "executionTime": 45,
+    "rowCount": 8,
+    "status": "success",
+    "errorMessage": "",
+    "userId": "user_001",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "ipAddress": "192.168.1.100",
+    "referer": "https://haokir.dev/blog",
+    "isSlowQuery": false,
+    "slowQueryThreshold": 1000,
+    "databaseName": "haokir_blog",
+    "tableName": "blog_posts",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "query_log_002",
+    "connectionId": "mysql_conn_001",
+    "queryType": "INSERT",
+    "query": "INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, NOW())",
+    "parameters": [
+      "new_user",
+      "new_user@example.com",
+      "hashed_password"
+    ],
+    "executionTime": 23,
+    "rowCount": 1,
+    "status": "success",
+    "errorMessage": "",
+    "userId": "system",
+    "userAgent": "Node.js/18.0.0",
+    "ipAddress": "127.0.0.1",
+    "referer": "",
+    "isSlowQuery": false,
+    "slowQueryThreshold": 1000,
+    "databaseName": "haokir_blog",
+    "tableName": "users",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "query_log_003",
+    "connectionId": "mysql_conn_002",
+    "queryType": "SELECT",
+    "query": "SELECT COUNT(*) as total FROM blog_posts WHERE author_id = ? AND status = 'published'",
+    "parameters": [
+      "user_001"
+    ],
+    "executionTime": 1200,
+    "rowCount": 1,
+    "status": "success",
+    "errorMessage": "",
+    "userId": "user_001",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "ipAddress": "192.168.1.101",
+    "referer": "https://haokir.dev/profile",
+    "isSlowQuery": true,
+    "slowQueryThreshold": 1000,
+    "databaseName": "haokir_blog_test",
+    "tableName": "blog_posts",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

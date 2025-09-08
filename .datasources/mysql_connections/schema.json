@@ -1,0 +1,110 @@
+
+{
+  "name": "mysql_connections",
+  "title": "MySQL数据库连接配置",
+  "schemas": [
+    {
+      "name": "name",
+      "title": "连接名称",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "host",
+      "title": "主机地址",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "port",
+      "title": "端口号",
+      "type": "Number",
+      "required": true
+    },
+    {
+      "name": "database",
+      "title": "数据库名",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "username",
+      "title": "用户名",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "password",
+      "title": "密码",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "charset",
+      "title": "字符集",
+      "type": "String"
+    },
+    {
+      "name": "timezone",
+      "title": "时区",
+      "type": "String"
+    },
+    {
+      "name": "ssl",
+      "title": "SSL连接",
+      "type": "Boolean"
+    },
+    {
+      "name": "connectionTimeout",
+      "title": "连接超时时间",
+      "type": "Number"
+    },
+    {
+      "name": "acquireTimeout",
+      "title": "获取连接超时时间",
+      "type": "Number"
+    },
+    {
+      "name": "maxConnections",
+      "title": "最大连接数",
+      "type": "Number"
+    },
+    {
+      "name": "minConnections",
+      "title": "最小连接数",
+      "type": "Number"
+    },
+    {
+      "name": "idleTimeout",
+      "title": "空闲超时时间",
+      "type": "Number"
+    },
+    {
+      "name": "isActive",
+      "title": "是否激活",
+      "type": "Boolean"
+    },
+    {
+      "name": "lastTestTime",
+      "title": "最后测试时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "lastTestStatus",
+      "title": "最后测试状态",
+      "type": "String"
+    },
+    {
+      "name": "errorMessage",
+      "title": "错误信息",
+      "type": "String"
+    },
+    {
+      "name": "description",
+      "title": "连接描述",
+      "type": "MultiLineString"
+    }
+  ]
+}
+  

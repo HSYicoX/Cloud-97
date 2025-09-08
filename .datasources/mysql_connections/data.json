@@ -1,0 +1,52 @@
+
+[
+  {
+    "_id": "mysql_conn_001",
+    "name": "生产数据库",
+    "host": "localhost",
+    "port": 3306,
+    "database": "haokir_blog",
+    "username": "haokir",
+    "password": "encrypted_password_here",
+    "charset": "utf8mb4",
+    "timezone": "+08:00",
+    "ssl": false,
+    "connectionTimeout": 10000,
+    "acquireTimeout": 30000,
+    "maxConnections": 10,
+    "minConnections": 2,
+    "idleTimeout": 60000,
+    "isActive": true,
+    "lastTestTime": 1736870400000,
+    "lastTestStatus": "success",
+    "errorMessage": "",
+    "description": "主生产数据库，存储博客文章和用户数据",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "mysql_conn_002",
+    "name": "测试数据库",
+    "host": "test-db.example.com",
+    "port": 3306,
+    "database": "haokir_blog_test",
+    "username": "test_user",
+    "password": "encrypted_test_password",
+    "charset": "utf8mb4",
+    "timezone": "+08:00",
+    "ssl": true,
+    "connectionTimeout": 5000,
+    "acquireTimeout": 15000,
+    "maxConnections": 5,
+    "minConnections": 1,
+    "idleTimeout": 30000,
+    "isActive": true,
+    "lastTestTime": 1736870400000,
+    "lastTestStatus": "success",
+    "errorMessage": "",
+    "description": "测试环境数据库，用于开发和测试",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

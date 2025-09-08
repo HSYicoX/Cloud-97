@@ -1,0 +1,101 @@
+
+{
+  "name": "mysql_backup_records",
+  "title": "MySQL备份记录",
+  "schemas": [
+    {
+      "name": "connectionId",
+      "title": "连接ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "backupType",
+      "title": "备份类型",
+      "type": "String"
+    },
+    {
+      "name": "backupSize",
+      "title": "备份大小",
+      "type": "Number"
+    },
+    {
+      "name": "backupPath",
+      "title": "备份路径",
+      "type": "String"
+    },
+    {
+      "name": "status",
+      "title": "备份状态",
+      "type": "String"
+    },
+    {
+      "name": "errorMessage",
+      "title": "错误信息",
+      "type": "String"
+    },
+    {
+      "name": "startTime",
+      "title": "开始时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "endTime",
+      "title": "结束时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "duration",
+      "title": "耗时",
+      "type": "Number"
+    },
+    {
+      "name": "tablesCount",
+      "title": "表数量",
+      "type": "Number"
+    },
+    {
+      "name": "rowsCount",
+      "title": "行数量",
+      "type": "Number"
+    },
+    {
+      "name": "compressionRatio",
+      "title": "压缩率",
+      "type": "Number"
+    },
+    {
+      "name": "isEncrypted",
+      "title": "是否加密",
+      "type": "Boolean"
+    },
+    {
+      "name": "encryptionKey",
+      "title": "加密密钥",
+      "type": "String"
+    },
+    {
+      "name": "retentionDays",
+      "title": "保留天数",
+      "type": "Number"
+    },
+    {
+      "name": "backupSchedule",
+      "title": "备份计划",
+      "type": "String"
+    },
+    {
+      "name": "triggerType",
+      "title": "触发类型",
+      "type": "String"
+    },
+    {
+      "name": "initiatedBy",
+      "title": "发起人",
+      "type": "String"
+    }
+  ]
+}
+  

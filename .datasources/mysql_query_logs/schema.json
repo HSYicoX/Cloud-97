@@ -1,0 +1,92 @@
+
+{
+  "name": "mysql_query_logs",
+  "title": "MySQL查询日志",
+  "schemas": [
+    {
+      "name": "connectionId",
+      "title": "连接ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "queryType",
+      "title": "查询类型",
+      "type": "String"
+    },
+    {
+      "name": "query",
+      "title": "SQL查询语句",
+      "type": "MultiLineString"
+    },
+    {
+      "name": "parameters",
+      "title": "查询参数",
+      "type": "Array",
+      "items": {
+        "type": "Object"
+      }
+    },
+    {
+      "name": "executionTime",
+      "title": "执行时间",
+      "type": "Number"
+    },
+    {
+      "name": "rowCount",
+      "title": "影响行数",
+      "type": "Number"
+    },
+    {
+      "name": "status",
+      "title": "执行状态",
+      "type": "String"
+    },
+    {
+      "name": "errorMessage",
+      "title": "错误信息",
+      "type": "String"
+    },
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String"
+    },
+    {
+      "name": "userAgent",
+      "title": "用户代理",
+      "type": "String"
+    },
+    {
+      "name": "ipAddress",
+      "title": "IP地址",
+      "type": "String"
+    },
+    {
+      "name": "referer",
+      "title": "来源页面",
+      "type": "String"
+    },
+    {
+      "name": "isSlowQuery",
+      "title": "是否慢查询",
+      "type": "Boolean"
+    },
+    {
+      "name": "slowQueryThreshold",
+      "title": "慢查询阈值",
+      "type": "Number"
+    },
+    {
+      "name": "databaseName",
+      "title": "数据库名",
+      "type": "String"
+    },
+    {
+      "name": "tableName",
+      "title": "表名",
+      "type": "String"
+    }
+  ]
+}
+  
