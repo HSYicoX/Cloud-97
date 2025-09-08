@@ -9,6 +9,7 @@ export function MouseEffects() {
   const [clicked, setClicked] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [particles, setParticles] = useState([]);
   useEffect(() => {
     const handleMouseMove = e => {
       setPosition({
@@ -18,7 +19,23 @@ export function MouseEffects() {
     };
     const handleMouseDown = () => {
       setClicked(true);
+      // 创建点击粒子效果
+      const newParticles = [];
+      for (let i = 0; i < 12; i++) {
+        newParticles.push({
+          id: Date.now() + i,
+          x: position.x,
+          y: position.y,
+          angle: i * 30 * Math.PI / 180,
+          distance: 20 + Math.random() * 30,
+          size: 2 + Math.random() * 4,
+          duration: 800 + Math.random() * 400
+        });
+      }
+      setParticles(newParticles);
       setTimeout(() => setClicked(false), 150);
+      // 清除粒子
+      setTimeout(() => setParticles([]), 1200);
     };
     const handleMouseUp = () => {
       setClicked(false);
@@ -30,7 +47,7 @@ export function MouseEffects() {
       setHovered(false);
     };
     const handleMouseOver = e => {
-      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('a')) {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('a') || e.target.closest('[data-hover-effect]')) {
         setHovered(true);
       }
     };
@@ -46,6 +63,8 @@ export function MouseEffects() {
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(handleMouseStop, 3000);
     };
+
+    // 添加事件监听器
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
@@ -65,50 +84,50 @@ export function MouseEffects() {
       document.removeEventListener('mousemove', handleMouseActive);
       clearTimeout(hideTimeout);
     };
-  }, []);
+  }, [position]);
   if (hidden) return null;
   return <>
       {/* 主光标点 */}
       <div className="cursor-dot" style={{
       left: `${position.x - 4}px`,
       top: `${position.y - 4}px`,
-      transform: `${clicked ? 'scale(0.8)' : hovered ? 'scale(1.5)' : 'scale(1)'}`,
+      transform: `${clicked ? 'scale(0.6)' : hovered ? 'scale(1.8)' : 'scale(1)'}`,
       backgroundColor: clicked ? '#ec4899' : hovered ? '#60a5fa' : '#3b82f6',
-      opacity: hovered ? 0.8 : 1,
-      transition: 'transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease'
+      opacity: hovered ? 0.9 : 1
     }} />
       
       {/* 外圈光标 */}
       <div className="cursor-outline" style={{
       left: `${position.x - 20}px`,
       top: `${position.y - 20}px`,
-      transform: `${clicked ? 'scale(1.2)' : hovered ? 'scale(1.5)' : 'scale(1)'}`,
+      transform: `${clicked ? 'scale(1.3)' : hovered ? 'scale(1.6)' : 'scale(1)'}`,
       borderColor: clicked ? '#f472b6' : hovered ? '#93c5fd' : '#60a5fa',
-      opacity: hovered ? 0.6 : 0.4,
-      transition: 'transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease'
+      opacity: hovered ? 0.7 : 0.4
     }} />
       
       {/* 粒子效果 */}
-      {clicked && <div className="absolute pointer-events-none" style={{
-      left: `${position.x}px`,
-      top: `${position.y}px`
-    }}>
-          {[...Array(8)].map((_, i) => <div key={i} className="absolute w-2 h-2 bg-pink-400 rounded-full opacity-70" style={{
-        transform: `translate(${Math.cos(i * 45 * Math.PI / 180) * 20}px, ${Math.sin(i * 45 * Math.PI / 180) * 20}px)`,
-        animation: `fadeOut 0.6s ease-out forwards`,
-        animationDelay: `${i * 0.05}s`
-      }} />)}
-        </div>}
-      
+      {particles.map(particle => <div key={particle.id} className="particle" style={{
+      left: `${particle.x}px`,
+      top: `${particle.y}px`,
+      width: `${particle.size}px`,
+      height: `${particle.size}px`,
+      animation: `particleFloat ${particle.duration}ms ease-out forwards`,
+      transform: `translate(${Math.cos(particle.angle) * particle.distance}px, 
+                             ${Math.sin(particle.angle) * particle.distance}px)`
+    }} />)}
+
       <style jsx>{`
-        @keyframes fadeOut {
-          from {
-            opacity: 0.7;
+        @keyframes particleFloat {
+          0% {
+            opacity: 0.8;
             transform: translate(0, 0) scale(1);
           }
-          to {
+          100% {
             opacity: 0;
-            transform: translate(var(--tx), var(--ty)) scale(0.3);
+            transform: translate(
+              calc(var(--tx) * 1px), 
+              calc(var(--ty) * 1px)
+            ) scale(0.2);
           }
         }
       `}</style>

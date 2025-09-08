@@ -21,3 +21,4 @@ export * from './BlogFilterPanel.jsx';
 export * from './BlogStats.jsx';
 export * from './BlogListHeader.jsx';
 export * from './EmptyBlogState.jsx';
+export * from './BackgroundParticles.jsx';
