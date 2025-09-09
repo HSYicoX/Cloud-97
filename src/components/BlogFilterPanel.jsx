@@ -1,22 +1,22 @@
 // @ts-ignore;
 import React from 'react';
 // @ts-ignore;
-import { Card, CardContent, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Badge, Button } from '@/components/ui';
+import { Card, CardContent, Input, Badge, Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 // @ts-ignore;
 import { Search, Filter, ArrowUpDown, Tag, Hash, X } from 'lucide-react';
 
-// @ts-ignore;
+// @ts-ignore
 import { RippleEffect } from '@/components/RippleEffect';
 export function BlogFilterPanel({
   searchQuery,
   onSearchChange,
   selectedCategory,
   onCategoryChange,
-  categories,
+  categories = [],
   sortBy,
   onSortChange,
-  allTags,
-  selectedTags,
+  allTags = [],
+  selectedTags = [],
   onTagToggle,
   onClearTags,
   showTagFilter,
@@ -47,7 +47,7 @@ export function BlogFilterPanel({
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="所有分类" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="hidden data-[state=open]:block data-[state=closed]:hidden">
                 <SelectItem value="all">所有分类</SelectItem>
                 {categories.map(category => <SelectItem key={category} value={category}>
                     {category}
@@ -63,7 +63,7 @@ export function BlogFilterPanel({
                 <ArrowUpDown className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="排序方式" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="hidden data-[state=open]:block data-[state=closed]:hidden">
                 <SelectItem value="newest">最新发布</SelectItem>
                 <SelectItem value="oldest">最早发布</SelectItem>
                 <SelectItem value="mostViews">最多阅读</SelectItem>
@@ -93,12 +93,12 @@ export function BlogFilterPanel({
           {/* 标签列表 */}
           {allTags.length > 0 ? <div className="flex flex-wrap gap-2">
               {allTags.slice(0, showTagFilter ? allTags.length : 8).map(tag => <RippleEffect key={tag}>
-                  <Badge variant={selectedTags.includes(tag) ? "default" : "outline"} className={`cursor-pointer transition-all hover-lift click-scale ${selectedTags.includes(tag) ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50'}`} onClick={() => onTagToggle(tag)}>
-                    <Hash className="h-3 w-3 mr-1" />
-                    {tag}
-                  </Badge>
-                </RippleEffect>)}
-              
+                    <Badge variant={selectedTags.includes(tag) ? "default" : "outline"} className={`cursor-pointer transition-all hover-lift click-scale ${selectedTags.includes(tag) ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50'}`} onClick={() => onTagToggle(tag)}>
+                      <Hash className="h-3 w-3 mr-1" />
+                      {tag}
+                    </Badge>
+                  </RippleEffect>)}
+
               {allTags.length > 8 && <RippleEffect>
                   <Badge variant="outline" className="cursor-pointer bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-600/50" onClick={onToggleTagFilter}>
                     {showTagFilter ? '收起' : `查看更多 (${allTags.length - 8})`}
