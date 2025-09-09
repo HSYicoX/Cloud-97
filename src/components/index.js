@@ -32,3 +32,4 @@ export * from './ui/form.jsx';
 export * from './ui/select.jsx';
 export * from './ui/card.jsx';
 export * from './ui/badge.jsx';
+export * from './UserAvatar.jsx';
