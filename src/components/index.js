@@ -33,3 +33,4 @@ export * from './ui/select.jsx';
 export * from './ui/card.jsx';
 export * from './ui/badge.jsx';
 export * from './UserAvatar.jsx';
+export * from './UserAvatarMenu.jsx';

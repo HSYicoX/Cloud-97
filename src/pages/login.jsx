@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // @ts-ignore;
 import { Button, Input, useToast, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 // @ts-ignore;
-import { Eye, EyeOff, LogIn, User, Mail, Lock, Smartphone } from 'lucide-react';
+import { Eye, EyeOff, LogIn, User, Mail, Lock } from 'lucide-react';
 
 // @ts-ignore;
 import { useForm } from 'react-hook-form';
@@ -48,8 +48,7 @@ export default function LoginPage(props) {
   } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginType, setLoginType] = useState('email'); // 'email' 或 'username'
-
+  const [loginType, setLoginType] = useState('email');
   const form = useForm({
     defaultValues: {
       email: '',
@@ -70,8 +69,6 @@ export default function LoginPage(props) {
     }
     try {
       setIsLoading(true);
-
-      // 构建查询条件
       let queryCondition;
       if (loginType === 'email') {
         queryCondition = {
@@ -107,8 +104,6 @@ export default function LoginPage(props) {
       if (user.password !== values.password) {
         throw new Error('密码错误，请重新输入');
       }
-
-      // 更新最后登录时间
       await $w.cloud.callDataSource({
         dataSourceName: 'users',
         methodName: 'wedaUpdateV2',
@@ -131,8 +126,6 @@ export default function LoginPage(props) {
         description: `欢迎回来，${user.username || user.email}!`,
         variant: 'default'
       });
-
-      // 跳转到首页
       setTimeout(() => {
         $w.utils.redirectTo({
           pageId: 'index',
@@ -172,7 +165,6 @@ export default function LoginPage(props) {
               <p className="text-slate-400">请选择登录方式</p>
             </div>
 
-            {/* 登录方式切换标签 */}
             <Tabs defaultValue="email" className="mb-6" onValueChange={setLoginType}>
               <TabsList className="grid w-full grid-cols-2 bg-slate-700/50 p-1 rounded-lg">
                 <TabsTrigger value="email" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white rounded-md transition-all">
@@ -188,67 +180,63 @@ export default function LoginPage(props) {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   
-                  {/* 邮箱登录表单 */}
                   <TabsContent value="email" className="space-y-6">
                     <FormField control={form.control} name="email" render={({
                     field
                   }) => <FormItem>
-                          <FormLabel className="text-slate-300 flex items-center">
-                            <Mail className="h-4 w-4 mr-2" />
-                            邮箱地址
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
-                              <Input {...field} type="email" placeholder="请输入邮箱地址" className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus" disabled={isLoading} />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
-                  </TabsContent>
-
-                  {/* 用户名登录表单 */}
-                  <TabsContent value="username" className="space-y-6">
-                    <FormField control={form.control} name="username" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel className="text-slate-300 flex items-center">
-                            <User className="h-4 w-4 mr-2" />
-                            用户名
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
-                              <Input {...field} placeholder="请输入用户名" className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus" disabled={isLoading} />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
-                  </TabsContent>
-
-                  {/* 密码输入框（共用） */}
-                  <FormField control={form.control} name="password" render={({
-                  field
-                }) => <FormItem>
                         <FormLabel className="text-slate-300 flex items-center">
-                          <Lock className="h-4 w-4 mr-2" />
-                          密码
+                          <Mail className="h-4 w-4 mr-2" />
+                          邮箱地址
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
-                            <Input {...field} type={showPassword ? 'text' : 'password'} placeholder="请输入密码" className="pl-10 pr-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus" disabled={isLoading} />
-                            <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors" onClick={() => setShowPassword(!showPassword)} disabled={isLoading}>
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
+                            <Input {...field} type="email" placeholder="请输入邮箱地址" className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled={isLoading} />
                           </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>} />
+                  </TabsContent>
 
-                  {/* 登录按钮 */}
+                  <TabsContent value="username" className="space-y-6">
+                    <FormField control={form.control} name="username" render={({
+                    field
+                  }) => <FormItem>
+                        <FormLabel className="text-slate-300 flex items-center">
+                          <User className="h-4 w-4 mr-2" />
+                          用户名
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
+                            <Input {...field} placeholder="请输入用户名" className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled={isLoading} />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>} />
+                  </TabsContent>
+
+                  <FormField control={form.control} name="password" render={({
+                  field
+                }) => <FormItem>
+                      <FormLabel className="text-slate-300 flex items-center">
+                        <Lock className="h-4 w-4 mr-2" />
+                        密码
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-500" />
+                          <Input {...field} type={showPassword ? 'text' : 'password'} placeholder="请输入密码" className="pl-10 pr-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled={isLoading} />
+                          <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors" onClick={() => setShowPassword(!showPassword)} disabled={isLoading}>
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>} />
+
                   <RippleEffect>
-                    <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover-lift">
+                    <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:scale-105">
                       {isLoading ? <>
                           <LoadingSpinner size="sm" className="mr-2" />
                           登录中...
@@ -262,7 +250,6 @@ export default function LoginPage(props) {
               </Form>
             </Tabs>
 
-            {/* 注册链接 */}
             <div className="text-center mt-6 pt-6 border-t border-slate-700/50">
               <p className="text-slate-400">
                 还没有账号？{' '}

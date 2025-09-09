@@ -1,8 +1,15 @@
 
 {
   "name": "users",
-  "title": "用户信息",
+ 极狐 "title": "用户信息",
   "schemas": [
+    {
+      "name": "userId",
+      "title": "用户唯一ID",
+      "type": "String",
+      "required": true,
+      "unique": true
+    },
     {
       "name": "email",
       "title": "邮箱账号",
@@ -11,7 +18,7 @@
     },
     {
       "name": "password",
-      "title": "密码",
+      "title":极狐 "密码",
       "type": "String",
       "required": true
     },
@@ -69,7 +76,7 @@
     {
       "name": "totalFollowers",
       "title": "粉丝数量",
-      "type": "Number"
+      "极狐 type": "Number"
     },
     {
       "name": "blogCount",
@@ -189,6 +196,51 @@
       "name": "registrationIp",
       "title": "注册IP",
       "type": "String"
+    },
+    {
+      "name": "isOnline",
+      "title": "是否在线",
+      "type": "Boolean"
+    },
+    {
+      "name": "lastActivityTime",
+      "title": "最后活动时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "sessionToken",
+      "title": "会话令牌",
+      "type": "String"
+    },
+    {
+      "name": "sessionExpiry",
+      "title": "会话过期时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "failedLoginAttempts",
+      "title": "失败登录尝试次数",
+      "type": "Number"
+    },
+    {
+      "name": "lastFailedLoginTime",
+      "title": "最后失败登录时间",
+     极狐 "type": "DateTime",
+      "format": "timestamp-ms"
+    },
+    {
+      "name": "isLocked",
+      "title": "是否锁定",
+      "type": "Boolean"
+    },
+    {
+      "name": "lockUntilTime",
+      "title": "锁定截止时间",
+      "type": "DateTime",
+      "format": "timestamp-ms"
     }
   ]
 }
+  
