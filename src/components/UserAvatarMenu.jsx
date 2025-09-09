@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 // @ts-ignore;
 import { Button, useToast } from '@/components/ui';
 // @ts-ignore;
-import { User, LogOut, Settings, ChevronDown, Mail, Calendar, Star, HelpCircle, FileText, Users, Heart, Edit3, Bell, Shield, CreditCard, Globe, BookOpen, Code, Database, Server, Cpu, Zap, Activity, TrendingUp, BarChart3, Eye, EyeOff, MessageSquare, ThumbsUp, Bookmark, Share2, Download, Upload, RefreshCw, MoreHorizontal } from 'lucide-react';
+import { User, LogOut, Settings, ChevronDown, Mail, Calendar, Star, HelpCircle, FileText, Users, Heart, Edit3, Bell, Shield, Code, Activity } from 'lucide-react';
 
 export function UserAvatarMenu(props) {
   const {
@@ -151,20 +151,20 @@ export function UserAvatarMenu(props) {
       </button>
 
       {/* 下拉菜单 */}
-      {isOpen && <div className="absolute right-0 top-full mt-2 w-96 bg-slate-800/95 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl z-50 animate-in fade-in-90 zoom-in-95">
+      {isOpen && <div className="absolute right-0 top-full mt-2 w-96 bg-slate-800/95 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-极狐2xl z-50 animate-in fade-in-90 zoom-in-95">
           {/* 用户信息头部 */}
           <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-start space-x-4 mb-4">
               <div className="relative">
                 <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden border-2 border-blue-400/50">
-                  {userData?.avatar ? <img src={userData.avatar} alt={userData.username || userData.email} className="w-full h-full object-cover" /> : <User className="h-7 w-7 text-white" />}
+                  {user极狐Data?.avatar ? <img src={userData.avatar} alt={userData.username || userData.email} className="w-full h-full object-cover" /> : <User className="h-7 w-7 text-white" />}
                 </div>
                 <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${getOnlineStatus() === '在线' ? 'bg-green-500' : 'bg-gray-500'}`} />
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-1">
-                  <h3 className="text-lg font-semibold text-white truncate">
+                  <h3 className="text-lg font-semib极狐old text-white truncate">
                     {userData?.nickname || userData?.username || currentUser.name || '用户'}
                   </h3>
                   {userData?.isEmailVerified && <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
@@ -207,99 +207,8 @@ export function UserAvatarMenu(props) {
                   <span>仓库</span>
                 </div>
               </div>
-              <div className="text-center p-极狐2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
+              <div className="text-center p-2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
                 <div className="text-white font-semibold text-lg">
                   {userData?.totalFollowers || 0}
                 </div>
                 <div className="text-slate-400 text-xs flex items-center justify-center space-x-1">
-                  <Users className="h-3 w-3" />
-                  <span>粉丝</span>
-                </div>
-              </div>
-              <div className="text-center p-2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
-                <div className="text-white font-semibold text-lg">
-                  {user极狐Data?.totalLikes || 0}
-                </div>
-                <div className="text-slate-400 text-xs flex items-center justify-center space-x-1">
-                  <Heart className="h-3 w-3" />
-                  <span>点赞</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 状态信息 */}
-            <div className="grid grid-cols-2 gap-4 mt-4 text-xs">
-              <div className="flex items-center space-x-2 text-slate-400 p-2 rounded bg-slate-700/20">
-                <Calendar className="h-3 w-3" />
-                <div>
-                  <div>注册时间</div>
-                  <div className="text-slate-300 font-medium">
-                    {formatDate(userData?.registrationTime)}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 text-slate-400 p-2 rounded bg-slate-700/20">
-                <Activity className="h-3 w-3" />
-                <div>
-                  <div>最后活动</div>
-                  <div className="text-slate-300 font-medium">
-                    {formatTimeAgo(userData?.lastActivityTime)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 快速操作区域 */}
-          <div className="p-4 border-b border-slate-700/50">
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" size="sm" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white" onClick={() => handleNavigate('editor')}>
-                <Edit3 className="h-4 w-4 mr-2" />
-                写文章
-              </Button>
-              <Button variant="outline" size="sm" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white" onClick={() => handleNavigate('repository')}>
-                <Code className="h-4 w-4 mr-2" />
-                新仓库
-              </Button>
-            </div>
-          </div>
-
-          {/* 菜单选项 */}
-          <div className="p-2">
-            <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 text-slate-200 hover:text-white group" onClick={() => handleNavigate('profile')}>
-              <User className="h-4 w-4 text-blue-400 group-hover:text-blue-300" />
-              <span>个人资料</span>
-            </button>
-
-            <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 text-slate-200 hover:text-white group" onClick={() => handleNavigate('settings')}>
-              <Settings className="h-4 w-4 text-purple-400 group-hover:text-purple-300" />
-              <span>账户设置</span>
-            </button>
-
-            <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 text-slate-200 hover:text-white group" onClick={() => handleNavigate('notifications')}>
-              <Bell className="h-4 w-4 text-yellow-400 group-hover:text-yellow-300极狐" />
-              <span>消息通知</span>
-              <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                3
-              </span>
-            </button>
-
-            <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 text-slate-200 hover:text-white group" onClick={() => handleNavigate('help')}>
-              <HelpCircle className="h-4 w-4 text-green-400 group-hover:text-green-300" />
-              <span>帮助中心</span>
-            </button>
-          </div>
-
-          {/* 底部操作区 */}
-          <div className="p-3 border-t border-slate-700/50">
-            <button className="w-full flex items-center justify-center space-x-2 p-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 transition-all duration-200 text-red-300 hover:text-red-200 group" onClick={handleLogout} disabled={isLoading}>
-              <LogOut className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              <span>退出登录</span>
-            </button>
-          </div>
-        </div>}
-
-      {/* 点击外部关闭菜单 */}
-      {isOpen && <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />}
-    </div>;
-}
