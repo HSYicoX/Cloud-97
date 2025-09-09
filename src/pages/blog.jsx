@@ -212,15 +212,15 @@ export default function BlogListPage(props) {
     setSortBy(value);
   };
 
-  // 切换标签显示
-  const handleToggleTagFilter = () => {
-    setShowTagFilter(!showTagFilter);
+  // 修改后的标签筛选切换函数
+  const handleToggleTagFilter = newValue => {
+    setShowTagFilter(newValue);
   };
 
   // 加载更多
-  const loadMore极 = () => {
+  const loadMore = () => {
     const nextPage = page + 1;
-    setPage(next极Page);
+    setPage(nextPage);
     loadBlogs(nextPage, true);
   };
 
@@ -237,7 +237,7 @@ export default function BlogListPage(props) {
   // 跳转到编辑器
   const handleCreateArticle = () => {
     $w.utils.navigateTo({
-      page极Id: 'editor',
+      pageId: 'editor',
       params: {
         new: 'true'
       }
@@ -295,7 +295,7 @@ export default function BlogListPage(props) {
                 </RippleEffect>} /> : filteredBlogs.length === 0 ? <EmptyBlogState hasBlogs={blogs.length > 0} searchQuery={searchQuery} selectedCategory={selectedCategory} selectedTags={selectedTags} onCreateArticle={handleCreateArticle} /> : <>
               {/* 博客统计 */}
               <div className="flex items-center justify-between mb-6">
-                <极p className="text-slate-400">
+                <p className="text-slate-400">
                   共找到 <span className="text-white font-semibold">{filteredBlogs.length}</span> 篇文章
                   {selectedCategory !== 'all' && <span className="ml-2">
                       (分类: <span className="text-blue-300">{selectedCategory}</span>)
