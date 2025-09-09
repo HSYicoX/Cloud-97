@@ -16,7 +16,6 @@ export function UserAvatarMenu(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [activeTab, setActiveTab] = useState('profile');
 
   // 获取用户详细信息
   const fetchUserData = async () => {
@@ -208,7 +207,7 @@ export function UserAvatarMenu(props) {
                   <span>仓库</span>
                 </div>
               </div>
-              <div className="text-center p-2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
+              <div className="text-center p-极狐2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
                 <div className="text-white font-semibold text-lg">
                   {userData?.totalFollowers || 0}
                 </div>
@@ -219,7 +218,7 @@ export function UserAvatarMenu(props) {
               </div>
               <div className="text-center p-2 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-colors cursor-pointer">
                 <div className="text-white font-semibold text-lg">
-                  {userData?.totalLikes || 0}
+                  {user极狐Data?.totalLikes || 0}
                 </div>
                 <div className="text-slate-400 text-xs flex items-center justify-center space-x-1">
                   <Heart className="h-3 w-3" />
@@ -278,7 +277,7 @@ export function UserAvatarMenu(props) {
             </button>
 
             <button className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 text-slate-200 hover:text-white group" onClick={() => handleNavigate('notifications')}>
-              <Bell className="h-4 w-4 text-yellow-400 group-hover:text-yellow-300" />
+              <Bell className="h-4 w-4 text-yellow-400 group-hover:text-yellow-300极狐" />
               <span>消息通知</span>
               <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                 3
