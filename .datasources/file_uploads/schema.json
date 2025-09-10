@@ -22,7 +22,7 @@
     },
     {
       "name": "fileSize",
-      "title": "文件大小(Bytes)",
+      "title": "文件大小(bytes)",
       "type": "Number"
     },
     {
@@ -32,38 +32,30 @@
       "required": true
     },
     {
-      "name": "hash",
-      "title": "文件哈希值",
+      "name": "thumbnailPath",
+      "title": "缩略图路径",
       "type": "String"
     },
     {
       "name": "isPublic",
       "title": "是否公开",
-      "type": "Boolean"
+      "type": "Boolean",
+      "default": false
     },
     {
-      "name": "downloadCount",
-      "title": "下载次数",
-      "type": "Number"
+      "name": "uploadMethod",
+      "title": "上传方式",
+      "type": "String"
     },
     {
-      "name": "description",
-      "title": "文件描述",
-      "type": "MultiLineString"
+      "name": "ipAddress",
+      "title": "上传IP地址",
+      "type": "String"
     },
     {
-      "name": "tags",
-      "title": "标签",
-      "type": "Array",
-      "items": {
-        "type": "String"
-      }
-    },
-    {
-      "name": "expireTime",
-      "title": "过期时间",
-      "type": "DateTime",
-      "format": "timestamp-ms"
+      "name": "metadata",
+      "title": "文件元数据",
+      "type": "Object"
     }
   ]
 }

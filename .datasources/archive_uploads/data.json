@@ -1,0 +1,19 @@
+
+[
+  {
+    "_id": "archive_001",
+    "userId": "user_001",
+    "fileName": "project-backup.zip",
+    "filePath": "/uploads/user_001/archives/project-backup.zip",
+    "archiveType": "zip",
+    "fileSize": 1024000,
+    "compressionRatio": 0.65,
+    "fileCount": 42,
+    "extractedPath": "/extracted/user_001/project-backup",
+    "isExtracted": true,
+    "passwordProtected": false,
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

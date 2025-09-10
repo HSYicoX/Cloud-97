@@ -1,0 +1,27 @@
+
+[
+  {
+    "_id": "folder_001",
+    "userId": "user_001",
+    "folderName": "my-project",
+    "folderPath": "/uploads/user_001/projects/my-project",
+    "fileCount": 15,
+    "totalSize": 512000,
+    "folderStructure": [
+      {
+        "name": "src",
+        "type": "directory",
+        "path": "/uploads/user_001/projects/my-project/src"
+      },
+      {
+        "name": "package.json",
+        "type": "file",
+        "path": "/uploads/user_001/projects/my-project/package.json"
+      }
+    ],
+    "isProjectFolder": true,
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

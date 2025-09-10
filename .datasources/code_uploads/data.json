@@ -1,0 +1,20 @@
+
+[
+  {
+    "_id": "code_001",
+    "userId": "user_001",
+    "repoId": "repo_001",
+    "fileName": "main.js",
+    "filePath": "/repos/user_001/project1/src/main.js",
+    "language": "JavaScript",
+    "fileSize": 2048,
+    "isExecutable": true,
+    "lineCount": 120,
+    "characterCount": 3200,
+    "licenseType": "MIT",
+    "dependencies": ["lodash", "axios"],
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  }
+]
+  

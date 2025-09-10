@@ -16,13 +16,19 @@
       "required": true
     },
     {
+      "name": "folderPath",
+      "title": "文件夹路径",
+      "type": "String",
+      "required": true
+    },
+    {
       "name": "fileCount",
       "title": "文件数量",
       "type": "Number"
     },
     {
       "name": "totalSize",
-      "title": "总大小(Bytes)",
+      "title": "总大小(bytes)",
       "type": "Number"
     },
     {
@@ -40,10 +46,6 @@
             "type": "String",
             "title": "文件类型"
           },
-          "size": {
-            "type": "Number",
-            "title": "文件大小"
-          },
           "path": {
             "type": "String",
             "title": "文件路径"
@@ -52,14 +54,9 @@
       }
     },
     {
-      "name": "isProject",
-      "title": "是否为项目",
+      "name": "isProjectFolder",
+      "title": "是否项目文件夹",
       "type": "Boolean"
-    },
-    {
-      "name": "projectType",
-      "title": "项目类型",
-      "type": "String"
     }
   ]
 }

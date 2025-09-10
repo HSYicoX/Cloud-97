@@ -15,8 +15,14 @@
       "type": "String"
     },
     {
-      "name": "fileType",
-      "title": "文件类型",
+      "name": "fileName",
+      "title": "文件名",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "filePath",
+      "title": "文件路径",
       "type": "String",
       "required": true
     },
@@ -26,9 +32,9 @@
       "type": "String"
     },
     {
-      "name": "fileContent",
-      "title": "文件内容",
-      "type": "MultiLineString"
+      "name": "fileSize",
+      "title": "文件大小(bytes)",
+      "type": "Number"
     },
     {
       "name": "isExecutable",
@@ -41,9 +47,14 @@
       "type": "Number"
     },
     {
-      "name": "hasTests",
-      "title": "包含测试",
-      "type": "Boolean"
+      "name": "characterCount",
+      "title": "字符数",
+      "type": "Number"
+    },
+    {
+      "name": "licenseType",
+      "title": "许可证类型",
+      "type": "String"
     },
     {
       "name": "dependencies",

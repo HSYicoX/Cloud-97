@@ -10,14 +10,25 @@
       "required": true
     },
     {
-      "name": "archiveType",
-      "title": "压缩包类型",
+      "name": "fileName",
+      "title": "文件名",
       "type": "String",
       "required": true
     },
     {
-      "name": "fileCount",
-      "title": "包含文件数",
+      "name": "filePath",
+      "title": "文件路径",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "archiveType",
+      "title": "压缩类型",
+      "type": "String"
+    },
+    {
+      "name": "fileSize",
+      "title": "文件大小(bytes)",
       "type": "Number"
     },
     {
@@ -26,17 +37,19 @@
       "type": "Number"
     },
     {
+      "name": "fileCount",
+      "title": "包含文件数",
+      "type": "Number"
+    },
+    {
+      "name": "extractedPath",
+      "title": "解压路径",
+      "type": "String"
+    },
+    {
       "name": "isExtracted",
       "title": "是否已解压",
       "type": "Boolean"
-    },
-    {
-      "name": "extractedFiles",
-      "title": "解压文件列表",
-      "type": "Array",
-      "items": {
-        "type": "String"
-      }
     },
     {
       "name": "passwordProtected",
