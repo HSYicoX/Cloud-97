@@ -1,0 +1,49 @@
+
+{
+  "name": "file_chunks",
+  "title": "文件分片记录",
+  "schemas": [
+    {
+      "name": "uploadId",
+      "title": "上传记录ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "chunkNumber",
+      "title": "分片序号",
+      "type": "Number",
+      "required": true
+    },
+    {
+      "name": "chunkSize",
+      "title": "分片大小",
+      "type": "Number",
+      "required": true
+    },
+    {
+      "name": "totalChunks",
+      "title": "总分片数",
+      "type": "Number",
+      "required": true
+    },
+    {
+      "name": "chunkHash",
+      "title": "分片哈希值",
+      "type": "String"
+    },
+    {
+      "name": "storagePath",
+      "title": "存储路径",
+      "type": "String"
+    },
+    {
+      "name": "status",
+      "title": "状态",
+      "type": "String",
+      "enum": ["uploading", "uploaded", "merged", "failed"],
+      "required": true
+    }
+  ]
+}
+  

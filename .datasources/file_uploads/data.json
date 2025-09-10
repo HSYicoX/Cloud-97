@@ -1,0 +1,57 @@
+
+[
+  {
+    "_id": "upload_001",
+    "userId": "user_001",
+    "fileName": "main.js",
+    "fileType": "application/javascript",
+    "fileSize": 1024,
+    "filePath": "/uploads/user_001/code/main_123.js",
+    "fileHash": "a1b2c3d4e5f6",
+    "uploadType": "code",
+    "isPublic": true,
+    "metadata": {
+      "codeLanguage": "JavaScript",
+      "repositoryId": "repo_001"
+    },
+    "status": "completed",
+    "createdAt": 1736870400000,
+    "updatedAt": 1736870400000
+  },
+  {
+    "_id": "upload_002",
+    "userId": "user_002",
+    "fileName": "project.zip",
+    "fileType": "application/zip",
+    "fileSize": 5242880,
+    "filePath": "/uploads/user_002/archives/project_456.zip",
+    "fileHash": "b2c3d4e5f6g7",
+    "uploadType": "archive",
+    "isPublic": false,
+    "metadata": {
+      "fileCount": 12,
+      "compressionFormat": "zip"
+    },
+    "status": "processing",
+    "createdAt": 1736870460000,
+    "updatedAt": 1736870460000
+  },
+  {
+    "_id": "upload_003",
+    "userId": "user_003",
+    "fileName": "assets",
+    "fileType": "folder",
+    "fileSize": 1048576,
+    "filePath": "/uploads/user_003/folders/assets_789",
+    "fileHash": "c3d4e5f6g7h8",
+    "uploadType": "folder",
+    "isPublic": true,
+    "metadata": {
+      "fileCount": 8
+    },
+    "status": "completed",
+    "createdAt": 1736870520000,
+    "updatedAt": 1736870520000
+  }
+]
+  
