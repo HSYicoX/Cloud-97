@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 // @ts-ignore;
 import { Button } from '@/components/ui';
 // @ts-ignore;
-import { Home, BookOpen, Github, User, Menu, X, ChevronRight, Settings as SettingsIcon, LogOut as LogOutIcon, Plus as PlusIcon, Search as SearchIcon, MessageSquare as MessageSquareIcon, Bell as BellIcon, HelpCircle as HelpCircleIcon, Bookmark as BookmarkIcon, TrendingUp as TrendingUpIcon3, Calendar as CalendarIcon, Star as StarIcon, Heart as HeartIcon, Share as ShareIcon, Download as DownloadIcon, Upload as UploadIcon, Cloud as CloudIcon, Database as DatabaseIcon, Server as ServerIcon, Cpu as CpuIcon, Zap as ZapIcon, Code as CodeIcon, FileText as FileTextIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, Map as MapIcon, Globe as GlobeIcon, Lock as LockIcon, Key as KeyIcon, Shield as ShieldIcon, Eye as EyeIcon, EyeOff as EyeOffIcon, Mail as MailIcon, Phone as PhoneIcon, MapPin as MapPinIcon, Compass as CompassIcon, Target as TargetIcon, Flag as FlagIcon, Award as AwardIcon, Trophy as TrophyIcon, Crown as CrownIcon, Gift as GiftIcon, ShoppingCart as ShoppingCartIcon, CreditCard as CreditCardIcon, DollarSign as DollarSignIcon3, Euro as EuroIcon, Bitcoin as BitcoinIcon, Wallet as WalletIcon, BarChart3 as BarChart3Icon, PieChart as PieChartIcon, LineChart as LineChartIcon, Activity as ActivityIcon, TrendingDown as TrendingDownIcon, Users as UsersIcon2, UserPlus as UserPlusIcon2, UserCheck as UserCheckIcon2, UserX as UserXIcon2, UserMinus as UserMinusIcon2, UserCog as UserCogIcon2, UserEdit as UserEditIcon2, Navigation as NavigationIcon } from 'lucide-react';
+import { Home, BookOpen, Github, User, Menu, X, ChevronRight, LogOut, LogIn } from 'lucide-react';
 
+// @ts-ignore
+import { AuthService } from '@/lib/auth';
 export function NavigationComponent(props) {
   const {
     $w,
@@ -15,6 +17,7 @@ export function NavigationComponent(props) {
   const [isNavigating, setIsNavigating] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -31,6 +34,13 @@ export function NavigationComponent(props) {
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isExpanded]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const loggedIn = await AuthService.checkAuth();
+      setIsLoggedIn(loggedIn);
+    };
+    checkAuth();
+  }, []);
   const handleNavigate = async (pageId, params = {}) => {
     try {
       setIsNavigating(true);
@@ -47,10 +57,13 @@ export function NavigationComponent(props) {
   };
   const handleLogout = async () => {
     try {
-      // 这里需要实现具体的登出逻辑
-      console.log('用户登出');
+      await AuthService.logout();
+      setIsLoggedIn(false);
+      await $w.utils.navigateTo({
+        pageId: 'index'
+      });
     } catch (error) {
-      console.error('登出失败:', error);
+      console.error('Logout failed:', error);
     }
   };
   const navItems = [{
@@ -74,16 +87,6 @@ export function NavigationComponent(props) {
     page: 'repository',
     color: 'text-purple-400',
     hoverColor: 'hover:text-purple-300'
-  }, {
-    id: 'editor',
-    label: '写文章',
-    icon: Plus,
-    page: 'editor',
-    params: {
-      new: 'true'
-    },
-    color: 'text-cyan-400',
-    hoverColor: 'hover:text-cyan-300'
   }, {
     id: 'profile',
     label: '个人资料',
@@ -131,9 +134,13 @@ export function NavigationComponent(props) {
 
             {/* 用户操作区 */}
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white" onClick={() => handleNavigate('profile')} disabled={isNavigating}>
-                <User className="h-5 w-5" />
-              </Button>
+              {isLoggedIn ? <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white" onClick={handleLogout} disabled={isNavigating}>
+                  退出登录
+                </Button> : <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white" onClick={() => $w.utils.navigateTo({
+              pageId: 'login'
+            })} disabled={isNavigating}>
+                  登录
+                </Button>}
               
               {/* 移动端菜单按钮 */}
               <button className="md:hidden p-2 rounded-lg hover:bg-slate-800 transition-all duration-200" onClick={e => {
@@ -197,34 +204,27 @@ export function NavigationComponent(props) {
                   </button>)}
               </div>
 
-              {/* 实用工具项 */}
-              <div className="pt-2">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-2">工具</h3>
-                {utilityItems.map((item, index) => <button key={item.id} onClick={() => handleNavigate(item.page, item.params || {})} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 group" disabled={isNavigating} style={{
-              animationDelay: `${(navItems.length + index) * 50}ms`
-            }}>
-                    <div className="flex items-center">
-                      <item.icon className={`h-4 w-4 mr-3 ${item.color} group-hover:${item.hoverColor}`} />
-                      <span className="text-slate-200 group-hover:text-white">{item.label}</span>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-blue-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>)}
-              </div>
-
               {/* 用户操作区 */}
               <div className="pt-4 mt-4 border-t border-slate-700/50">
-                <button onClick={() => handleNavigate('profile')} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 group" disabled={isNavigating}>
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 mr-3 text-green-400 group-hover:text-green-300" />
-                    <span className="text-slate-200 group-hover:text-white">个人资料</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-green-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </button>
-                
-                <button onClick={handleLogout} className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/20 transition-all duration-200 group text-red-300 hover:text-red-200 mt-2">
-                  <LogOut className="h-4 w-4 mr-3" />
-                  <span>退出登录</span>
-                </button>
+                {isLoggedIn ? <>
+                    <button onClick={() => handleNavigate('profile')} className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-700/50 transition-all duration-200 group" disabled={isNavigating}>
+                      <div className="flex items-center">
+                        <User className="h-4 w-4 mr-3 text-green-400 group-hover:text-green-300" />
+                        <span className="text-slate-200 group-hover:text-white">个人资料</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-green-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                    
+                    <button onClick={handleLogout} className="w-full flex items-center p-3 rounded-lg hover:bg-red-500/20 transition-all duration-200 group text-red-300 hover:text-red-200 mt-2">
+                      <LogOut className="h-4 w-4 mr-3" />
+                      <span>退出登录</span>
+                    </button>
+                  </> : <button onClick={() => $w.utils.navigateTo({
+              pageId: 'login'
+            })} className="w-full flex items-center p-3 rounded-lg hover:bg-blue-500/20 transition-all duration-200 group text-blue-300 hover:text-blue-200">
+                    <LogIn className="h-4 w-4 mr-3" />
+                    <span>登录</span>
+                  </button>}
               </div>
             </div>
           </div>}
