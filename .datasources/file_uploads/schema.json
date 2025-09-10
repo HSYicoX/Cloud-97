@@ -18,14 +18,12 @@
     {
       "name": "fileType",
       "title": "文件类型",
-      "type": "String",
-      "required": true
+      "type": "String"
     },
     {
       "name": "fileSize",
-      "title": "文件大小(bytes)",
-      "type": "Number",
-      "required": true
+      "title": "文件大小(Bytes)",
+      "type": "Number"
     },
     {
       "name": "filePath",
@@ -34,60 +32,35 @@
       "required": true
     },
     {
-      "name": "fileHash",
+      "name": "hash",
       "title": "文件哈希值",
       "type": "String"
     },
     {
-      "name": "uploadType",
-      "title": "上传类型",
-      "type": "String",
-      "enum": ["file", "code", "folder", "archive"],
-      "required": true
-    },
-    {
       "name": "isPublic",
       "title": "是否公开",
-      "type": "Boolean",
-      "default": false
+      "type": "Boolean"
     },
     {
-      "name": "metadata",
-      "title": "元数据",
-      "type": "Object",
-      "format": {
-        "codeLanguage": {
-          "type": "String",
-          "title": "编程语言(代码文件)"
-        },
-        "fileCount": {
-          "type": "Number",
-          "title": "文件数量(文件夹/压缩包)"
-        },
-        "compressionFormat": {
-          "type": "String",
-          "title": "压缩格式(压缩包)"
-        },
-        "repositoryId": {
-          "type": "String",
-          "title": "关联仓库ID(代码文件)"
-        }
+      "name": "downloadCount",
+      "title": "下载次数",
+      "type": "Number"
+    },
+    {
+      "name": "description",
+      "title": "文件描述",
+      "type": "MultiLineString"
+    },
+    {
+      "name": "tags",
+      "title": "标签",
+      "type": "Array",
+      "items": {
+        "type": "String"
       }
     },
     {
-      "name": "status",
-      "title": "状态",
-      "type": "String",
-      "enum": ["uploading", "processing", "completed", "failed"],
-      "required": true
-    },
-    {
-      "name": "errorMessage",
-      "title": "错误信息",
-      "type": "String"
-    },
-    {
-      "name": "expiryTime",
+      "name": "expireTime",
       "title": "过期时间",
       "type": "DateTime",
       "format": "timestamp-ms"

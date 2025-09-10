@@ -1,0 +1,48 @@
+
+{
+  "name": "archive_uploads",
+  "title": "压缩包上传记录",
+  "schemas": [
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "archiveType",
+      "title": "压缩包类型",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "fileCount",
+      "title": "包含文件数",
+      "type": "Number"
+    },
+    {
+      "name": "compressionRatio",
+      "title": "压缩率",
+      "type": "Number"
+    },
+    {
+      "name": "isExtracted",
+      "title": "是否已解压",
+      "type": "Boolean"
+    },
+    {
+      "name": "extractedFiles",
+      "title": "解压文件列表",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    },
+    {
+      "name": "passwordProtected",
+      "title": "是否有密码保护",
+      "type": "Boolean"
+    }
+  ]
+}
+  

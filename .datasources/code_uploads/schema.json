@@ -1,0 +1,58 @@
+
+{
+  "name": "code_uploads",
+  "title": "代码文件上传记录",
+  "schemas": [
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "repoId",
+      "title": "关联仓库ID",
+      "type": "String"
+    },
+    {
+      "name": "fileType",
+      "title": "文件类型",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "language",
+      "title": "编程语言",
+      "type": "String"
+    },
+    {
+      "name": "fileContent",
+      "title": "文件内容",
+      "type": "MultiLineString"
+    },
+    {
+      "name": "isExecutable",
+      "title": "是否可执行",
+      "type": "Boolean"
+    },
+    {
+      "name": "lineCount",
+      "title": "代码行数",
+      "type": "Number"
+    },
+    {
+      "name": "hasTests",
+      "title": "包含测试",
+      "type": "Boolean"
+    },
+    {
+      "name": "dependencies",
+      "title": "依赖项",
+      "type": "Array",
+      "items": {
+        "type": "String"
+      }
+    }
+  ]
+}
+  

@@ -1,0 +1,66 @@
+
+{
+  "name": "folder_uploads",
+  "title": "文件夹上传记录",
+  "schemas": [
+    {
+      "name": "userId",
+      "title": "用户ID",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "folderName",
+      "title": "文件夹名",
+      "type": "String",
+      "required": true
+    },
+    {
+      "name": "fileCount",
+      "title": "文件数量",
+      "type": "Number"
+    },
+    {
+      "name": "totalSize",
+      "title": "总大小(Bytes)",
+      "type": "Number"
+    },
+    {
+      "name": "folderStructure",
+      "title": "文件夹结构",
+      "type": "Array",
+      "items": {
+        "type": "Object",
+        "format": {
+          "name": {
+            "type": "String",
+            "title": "文件名"
+          },
+          "type": {
+            "type": "String",
+            "title": "文件类型"
+          },
+          "size": {
+            "type": "Number",
+            "title": "文件大小"
+          },
+          "path": {
+            "type": "String",
+            "title": "文件路径"
+          }
+        }
+      }
+    },
+    {
+      "name": "isProject",
+      "title": "是否为项目",
+      "type": "Boolean"
+    },
+    {
+      "name": "projectType",
+      "title": "项目类型",
+      "type": "String"
+    }
+  ]
+}
+  
