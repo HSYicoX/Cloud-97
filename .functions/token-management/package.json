@@ -1,0 +1,13 @@
+
+    {
+      "name": "token-management",
+      "description": "登录票据管理云函数，包含 refreshToken 和 accessToken 生成与管理",
+      "version": "1.0.0",
+      "main": "index.js",
+      "dependencies": {
+        "@cloudbase/node-sdk": "^3.3.7",
+        "jsonwebtoken": "^9.0.0",
+        "crypto": "^1.0.1"
+      }
+    }
+  
